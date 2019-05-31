@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# This program is dedicated to the public domain under the CC0 license.
 #
 # THIS EXAMPLE HAS BEEN UPDATED TO WORK WITH THE BETA VERSION 12 OF PYTHON-TELEGRAM-BOT.
 # If you're still using version 11.1.0, please see the examples at
@@ -26,7 +25,6 @@ import logging
 import threading
 import datetime
 import json
-# import collections
 
 from telegram.ext import Updater, CommandHandler
 
