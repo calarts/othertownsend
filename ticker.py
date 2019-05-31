@@ -37,7 +37,6 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 heartrate_file = "data/heart_rate-2019-01-06.json"
-
 pulserecord = {}
 
 with open(heartrate_file) as json_file:  
@@ -49,15 +48,9 @@ with open(heartrate_file) as json_file:
 
 sortedpulse = dict(sorted(pulserecord.items()))
 
-# Define a few command handlers. These usually take the two arguments bot and
-# update. Error handlers also receive the raised TelegramError object in error.
-def start(update, context):
-    update.message.reply_text('Hi! Use /set <seconds> to set a timer')
 
-
-def alarm(context):
-    """Send the alarm message."""
-    job = context.job
+# get the pulse
+def getpulsenow():
     rightnow = datetime.datetime.now()
     midnight = datetime.datetime.combine(rightnow.date(), datetime.time())
     mysecs = (rightnow - midnight).seconds
@@ -66,6 +59,29 @@ def alarm(context):
     # min(myList, key=lambda x:abs(x-mysecs))
     mypulse = sortedpulse[mysecs] if mysecs in sortedpulse else sortedpulse[min(sortedpulse.keys(), key=lambda k: abs(k-mysecs))]
     timestr = datetime.datetime.now().strftime("%H:%M:%S")
+    return mypulse, timestr
+
+# Define a few command handlers. These usually take the two arguments bot and
+# update. Error handlers also receive the raised TelegramError object in error.
+def start(update, context):
+    update.message.reply_text('Hi! Use /set <seconds> to set a timer')
+    
+def pulse(update):
+	"""Gimme your current heart-rate"""
+    mypulse, timestr = getpulsenow()
+    msg = "♥ " + str(mypulse) + " BPM ("+timestr+")️"
+    update.message.reply_text(msg)
+
+def loc(update):
+	"""Gimme your current location STUB"""
+    mypulse, timestr = getpulsenow()
+    msg = "lat = xxx, lon = yyy️"
+    update.message.reply_text(msg)
+
+def alarm(context):
+    """Send the alarm message."""
+    job = context.job
+    mypulse, timestr = getpulsenow()
     msg = "♥ " + str(mypulse) + " BPM ("+timestr+") 💜 😴〰️"
     context.bot.send_message(job.context, text=msg)
 
@@ -145,6 +161,8 @@ def main():
 	                              pass_args=True,
 	                              pass_job_queue=True,
 	                              pass_chat_data=True))
+	dp.add_handler(CommandHandler('pulse', pulse, pass_chat_data=True))
+	dp.add_handler(CommandHandler('loc', loc, pass_chat_data=True))
 
 
 	# Start the Bot
