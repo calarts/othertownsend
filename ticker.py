@@ -31,9 +31,9 @@ from telegram.ext import Updater, CommandHandler
 from _config import TOKEN
 
 # Enable logging
-logging.FileHandler('tickererror.log')
+logging.FileHandler('logs/tickererror.log')
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
