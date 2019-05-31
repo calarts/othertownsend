@@ -66,13 +66,13 @@ def getpulsenow():
 def start(update, context):
     update.message.reply_text('Hi! Use /set <seconds> to set a timer')
     
-def pulse(update):
+def pulse(update, context):
     """Gimme your current heart-rate"""
     mypulse, timestr = getpulsenow()
     msg = "♥ " + str(mypulse) + " BPM ("+timestr+")️"
     update.message.reply_text(msg)
 
-def loc():
+def loc(update, context):
     """Gimme your current location STUB"""
     msg = "lat = xxx, lon = yyy️"
     update.message.reply_text(msg)
@@ -161,7 +161,7 @@ def main():
 	                              pass_job_queue=True,
 	                              pass_chat_data=True))
 	dp.add_handler(CommandHandler('pulse', pulse, pass_chat_data=True))
-	dp.add_handler(CommandHandler('loc', loc))
+	dp.add_handler(CommandHandler('loc', loc, pass_chat_data=True))
 
 
 	# Start the Bot
