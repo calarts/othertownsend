@@ -126,7 +126,7 @@ def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
     # context.bot.send_message(context, text='Update "%s" caused error "%s"', update, context.error)
     
-def shutdown(update, context):
+def shutdown():
     # context.bot.send_message(job.context, text='Stopping...')
     updater.stop()
     updater.is_idle = False
@@ -156,10 +156,7 @@ def main():
 	# log all errors
 	dp.add_error_handler(error)
 	# add a stop handler
-	dp.add_handler(CommandHandler('stop', stop,
-	                              pass_args=True,
-	                              pass_job_queue=True,
-	                              pass_chat_data=True))
+	dp.add_handler(CommandHandler('stop', stop))
 	dp.add_handler(CommandHandler('pulse', pulse, pass_chat_data=True))
 	dp.add_handler(CommandHandler('loc', loc, pass_chat_data=True))
 
