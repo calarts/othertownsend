@@ -33,10 +33,10 @@ from _config import TOKEN
 # Enable logging
 logging.FileHandler('logs/tickererror.log')
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 heartrate_file = "data/heart_rate-2019-01-06.json"
 pulserecord = {}
