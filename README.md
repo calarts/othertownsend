@@ -12,7 +12,7 @@ mkdir logs
 sudo chgrp -R www-data .
 sudo chmod -R g+rw .
 
-cat "TOKEN = 'BLAHBLAH' > .config
+cat "TOKEN = 'BLAHBLAH' > _config.py
 
 virtualenv -p python3 venv
 . venv/bin/activate
