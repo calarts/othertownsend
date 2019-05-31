@@ -161,7 +161,7 @@ def main():
 	                              pass_job_queue=True,
 	                              pass_chat_data=True))
 	dp.add_handler(CommandHandler('pulse', pulse, pass_chat_data=True))
-	dp.add_handler(CommandHandler('loc', loc, pass_chat_data=True))
+	dp.add_handler(CommandHandler('loc', loc))
 
 
 	# Start the Bot
