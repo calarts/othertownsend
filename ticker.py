@@ -27,7 +27,7 @@ from datetime import datetime, date, timedelta, time
 import json
 
 from telegram.ext import Updater, CommandHandler
-# from geojson import LineString, MultiLineString, Feature, Point, FeatureCollection
+from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
 
 from vars import pulses, trips, times
@@ -64,7 +64,7 @@ def time_in_range(start, end, x):
         return start <= x or x <= end
     
 def gimmeTimedelta(s):
-    return timedelta(hours=s.hour, minutes=s.minute, seconds=s.second).total_seconds()
+    return int(timedelta(hours=s.hour, minutes=s.minute, seconds=s.second).total_seconds())
 
 def gimmeLongLat(stups):
     # ugh, must reverse lat and lng
@@ -73,30 +73,39 @@ def gimmeLongLat(stups):
         revtups.append(tup[::-1])
     return revtups
 
-# def gimmeGeojson(atrip):
-#     # ugh, must reverse lat and lng
-#     revtups = gimmeLongLat(atrip)
-#     myline = LineString(revtups)
-#     myfeature = Feature(geometry=myline)
-#     myfeaturecollection = FeatureCollection(myfeature)
-#     return myfeaturecollection
+def gimmeGeojson(atrip,myloc):
+    feature_collection = []
+    # ugh, must reverse lat and lng
+    revtups = gimmeLongLat(atrip)
+    myline = LineString(revtups)
+    mylocrev = Point( gimmeLongLat([myloc])[0] )
+    mylocrevfeature = Feature(geometry=mylocrev,name="my current point")
+    mylinefeature = Feature(geometry=myline,name="my trip")
+    feature_collection = [mylocrevfeature,mylinefeature]
+    myfeaturecollection = FeatureCollection(feature_collection)
+    return myfeaturecollection
 
 def get_curtimeslot(timeslots):
     curtime = datetime.now().time()
-#     curtime = (datetime.time(15, 7, 6, 952394))
     for idx,slot in enumerate(timeslots):
         if time_in_range(slot['start'], slot['end'], curtime):
-#             print('got one!',idx,slot)
             myslot = idx
             t1 = gimmeTimedelta(slot['start'])
             t2 = gimmeTimedelta(slot['end'])
             ct = gimmeTimedelta(curtime)
-            duration = (t2-t1)
-            timeintotrip = (ct-t1)
-            # myfeaturecollection = gimmeGeojson(trips[myslot])
-    return(curtime,myslot,duration,timeintotrip,trips[myslot])
+            duration = int(t2-t1)
+            numchunks = len(trips[myslot])
+            interval = int(duration/numchunks)
+            timeintotrip = int(ct-t1)
+            for i in range( numchunks ):
+                chunkpoint = int(interval * i)
+                if (timeintotrip > chunkpoint) and (timeintotrip-chunkpoint < interval):
+                    myloc = trips[myslot][i]
+            myfeaturecollection = gimmeGeojson(trips[myslot],myloc)
+    return(curtime,myslot,duration,timeintotrip,myloc,myfeaturecollection)
+    
 
-curtime,myslot,duration,timeintotrip,trips[myslot] = get_curtimeslot(times)
+curtime,myslot,duration,timeintotrip,myloc,myfeaturecollection = get_curtimeslot(times)
 
 # get the pulse
 def getpulsenow():
