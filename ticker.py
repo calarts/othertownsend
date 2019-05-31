@@ -67,14 +67,13 @@ def start(update, context):
     update.message.reply_text('Hi! Use /set <seconds> to set a timer')
     
 def pulse(update):
-	"""Gimme your current heart-rate"""
+    """Gimme your current heart-rate"""
     mypulse, timestr = getpulsenow()
     msg = "♥ " + str(mypulse) + " BPM ("+timestr+")️"
     update.message.reply_text(msg)
 
 def loc(update):
-	"""Gimme your current location STUB"""
-    mypulse, timestr = getpulsenow()
+    """Gimme your current location STUB"""
     msg = "lat = xxx, lon = yyy️"
     update.message.reply_text(msg)
 
