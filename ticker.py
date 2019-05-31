@@ -28,7 +28,7 @@ import json
 
 from telegram.ext import Updater, CommandHandler
 
-from .config import TOKEN
+from _config import TOKEN
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
