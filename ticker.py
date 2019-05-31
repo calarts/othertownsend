@@ -126,7 +126,7 @@ def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
     # context.bot.send_message(context, text='Update "%s" caused error "%s"', update, context.error)
     
-def shutdown():
+def shutdown(update, context):
     # context.bot.send_message(job.context, text='Stopping...')
     updater.stop()
     updater.is_idle = False
