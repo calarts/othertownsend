@@ -148,7 +148,7 @@ def alarm(context):
     mypulse, timestr = getpulsenow()
     feelings = ["💜","💜","💜","💜","💜","💜","💜","💛","💛","💛","💛","💛","💜","💜","💜","💜","💜","💛",]
     sleeps = ["➖","➖","➖","➖","➖","〰️","〰️","〰️","〰️","〰️","〰️","〰️","➖","➖","➖","➖","➖","〰️",]
-    msg = str(sleeps[myslot]) + str(sleeps[myslot]) + str(trips[myslot][0]) + str(mypulse) + " BPM ("+ str(timestr) +")"
+    msg = str(feelings[myslot]) + str(sleeps[myslot]) + str(trips[myslot][0]) + str(mypulse) + " BPM ("+ str(timestr) +")"
     context.bot.send_message(job.context, text=msg)
 
 
