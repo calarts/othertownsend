@@ -121,6 +121,20 @@ def pulse(update, context):
     msg = "♥ " + str(mypulse) + " BPM ("+timestr+")️"
     update.message.reply_text(msg)
 
+def feeling(update, context):
+    """Gimme your current mood"""
+    mypulse, timestr = getpulsenow()
+    feelings = ["💜","💜","💜","💜","💜","💜","💜","💛","💛","💛","💛","💛","💜","💜","💜","💜","💜","💛",]
+    msg = str(feelings[myslot]) + " ("+timestr+")️"
+    update.message.reply_text(msg)
+
+def sleep(update, context):
+    """Gimme your current heart-rate"""
+    mypulse, timestr = getpulsenow()
+    sleeps = ["➖","➖","➖","➖","➖","〰️","〰️","〰️","〰️","〰️","〰️","〰️","➖","➖","➖","➖","➖","〰️",]
+    msg = str(sleeps[myslot]) + " ("+timestr+")️"
+    update.message.reply_text(msg)
+
 def loc(update, context):
     """Gimme your current location STUB"""
     # hacky! -- get the first position on our trip
@@ -132,9 +146,10 @@ def alarm(context):
     """Send the alarm message."""
     job = context.job
     mypulse, timestr = getpulsenow()
-    msg = "♥ " + str(mypulse) + " BPM ("+timestr+") 💜 😴〰️"
+    feelings = ["💜","💜","💜","💜","💜","💜","💜","💛","💛","💛","💛","💛","💜","💜","💜","💜","💜","💛",]
+    sleeps = ["➖","➖","➖","➖","➖","〰️","〰️","〰️","〰️","〰️","〰️","〰️","➖","➖","➖","➖","➖","〰️",]
+    msg = str(sleeps[myslot]) + str(sleeps[myslot]) + trips[myslot][0] + str(mypulse) + " BPM ("+timestr+")"
     context.bot.send_message(job.context, text=msg)
-
 
 
 def set_timer(update, context):
@@ -186,39 +201,41 @@ def stop(update, context):
     threading.Thread(target=shutdown).start()
 
 def main():
-	# """Run bot."""
-	# Create the Updater and pass it your bot's token.
-	# Make sure to set use_context=True to use the new context based callbacks
-	# Post version 12 this will no longer be necessary
-	updater = Updater(TOKEN, use_context=True)
+    # """Run bot."""
+    # Create the Updater and pass it your bot's token.
+    # Make sure to set use_context=True to use the new context based callbacks
+    # Post version 12 this will no longer be necessary
+    updater = Updater(TOKEN, use_context=True)
 
-	# Get the dispatcher to register handlers
-	dp = updater.dispatcher
+    # Get the dispatcher to register handlers
+    dp = updater.dispatcher
 
-	# on different commands - answer in Telegram
-	dp.add_handler(CommandHandler("start", start))
-	dp.add_handler(CommandHandler("help", start))
-	dp.add_handler(CommandHandler("set", set_timer,
-	                              pass_args=True,
-	                              pass_job_queue=True,
-	                              pass_chat_data=True))
-	dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
+    # on different commands - answer in Telegram
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("help", start))
+    dp.add_handler(CommandHandler("set", set_timer,
+                                  pass_args=True,
+                                  pass_job_queue=True,
+                                  pass_chat_data=True))
+    dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
 
-	# log all errors
-	dp.add_error_handler(error)
-	# add a stop handler
-	dp.add_handler(CommandHandler('stop', stop))
-	dp.add_handler(CommandHandler('pulse', pulse, pass_chat_data=True))
-	dp.add_handler(CommandHandler('loc', loc, pass_chat_data=True))
+    # log all errors
+    dp.add_error_handler(error)
+    # add a stop handler
+    dp.add_handler(CommandHandler('stop', stop))
+    dp.add_handler(CommandHandler('pulse', pulse, pass_chat_data=True))
+    dp.add_handler(CommandHandler('loc', loc, pass_chat_data=True))
+    dp.add_handler(CommandHandler('feeling', feeling, pass_chat_data=True))
+    dp.add_handler(CommandHandler('sleep', sleep, pass_chat_data=True))
 
 
-	# Start the Bot
-	updater.start_polling()
+    # Start the Bot
+    updater.start_polling()
 
-	# Block until you press Ctrl-C or the process receives SIGINT, SIGTERM or
-	# SIGABRT. This should be used most of the time, since start_polling() is
-	# non-blocking and will stop the bot gracefully.
-	updater.idle()
+    # Block until you press Ctrl-C or the process receives SIGINT, SIGTERM or
+    # SIGABRT. This should be used most of the time, since start_polling() is
+    # non-blocking and will stop the bot gracefully.
+    updater.idle()
 
 
 if __name__ == '__main__':
