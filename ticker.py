@@ -31,6 +31,8 @@ from telegram.ext import Updater, CommandHandler
 from _config import TOKEN
 
 # Enable logging
+logger.setLevel(logging.DEBUG)
+logging.FileHandler('tickererror.log')
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
@@ -169,10 +171,6 @@ def main():
 	# non-blocking and will stop the bot gracefully.
 	updater.idle()
 
-if __name__ != '__main__':
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    logger.handlers = gunicorn_logger.handlers
-    logger.setLevel(gunicorn_logger.level)
 
 if __name__ == '__main__':
     main()
