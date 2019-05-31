@@ -72,7 +72,7 @@ def pulse(update):
     msg = "♥ " + str(mypulse) + " BPM ("+timestr+")️"
     update.message.reply_text(msg)
 
-def loc(update):
+def loc():
     """Gimme your current location STUB"""
     msg = "lat = xxx, lon = yyy️"
     update.message.reply_text(msg)
