@@ -23,10 +23,15 @@ bot.
 
 import logging
 import threading
-import datetime
+from datetime import datetime, date, timedelta, time
 import json
 
 from telegram.ext import Updater, CommandHandler
+# from geojson import LineString, MultiLineString, Feature, Point, FeatureCollection
+# import geojsonio
+
+from vars import pulses, trips, times
+
 
 from _config import TOKEN
 
@@ -44,23 +49,65 @@ pulserecord = {}
 with open(heartrate_file) as json_file:  
     data = json.load(json_file)
     for p in data:
-        do = datetime.datetime.strptime(p['dateTime'], '%m/%d/%y %H:%M:%S')
+        do = datetime.strptime(p['dateTime'], '%m/%d/%y %H:%M:%S')
         myseconds = (do.hour*3600)+(do.minute*60)+(do.second)
         pulserecord[myseconds]=str(p['value']['bpm'])
 
 sortedpulse = dict(sorted(pulserecord.items()))
 
 
+def time_in_range(start, end, x):
+    """Return true if x is in the range [start, end]"""
+    if start <= end:
+        return start <= x <= end
+    else:
+        return start <= x or x <= end
+    
+def gimmeTimedelta(s):
+    return timedelta(hours=s.hour, minutes=s.minute, seconds=s.second).total_seconds()
+
+def gimmeLongLat(stups):
+    # ugh, must reverse lat and lng
+    revtups = []
+    for tup in stups:
+        revtups.append(tup[::-1])
+    return revtups
+
+# def gimmeGeojson(atrip):
+#     # ugh, must reverse lat and lng
+#     revtups = gimmeLongLat(atrip)
+#     myline = LineString(revtups)
+#     myfeature = Feature(geometry=myline)
+#     myfeaturecollection = FeatureCollection(myfeature)
+#     return myfeaturecollection
+
+def get_curtimeslot(timeslots):
+    curtime = datetime.now().time()
+#     curtime = (datetime.time(15, 7, 6, 952394))
+    for idx,slot in enumerate(timeslots):
+        if time_in_range(slot['start'], slot['end'], curtime):
+#             print('got one!',idx,slot)
+            myslot = idx
+            t1 = gimmeTimedelta(slot['start'])
+            t2 = gimmeTimedelta(slot['end'])
+            ct = gimmeTimedelta(curtime)
+            duration = (t2-t1)
+            timeintotrip = (ct-t1)
+            # myfeaturecollection = gimmeGeojson(trips[myslot])
+    return(curtime,myslot,duration,timeintotrip,trips[myslot])
+
+curtime,myslot,duration,timeintotrip,trips[myslot] = get_curtimeslot(times)
+
 # get the pulse
 def getpulsenow():
-    rightnow = datetime.datetime.now()
-    midnight = datetime.datetime.combine(rightnow.date(), datetime.time())
+    rightnow = datetime.now()
+    midnight = datetime.combine(rightnow.date(), time())
     mysecs = (rightnow - midnight).seconds
  
     # lookup the heartrate at this time:
     # min(myList, key=lambda x:abs(x-mysecs))
     mypulse = sortedpulse[mysecs] if mysecs in sortedpulse else sortedpulse[min(sortedpulse.keys(), key=lambda k: abs(k-mysecs))]
-    timestr = datetime.datetime.now().strftime("%H:%M:%S")
+    timestr = datetime.now().strftime("%H:%M:%S")
     return mypulse, timestr
 
 # Define a few command handlers. These usually take the two arguments bot and
@@ -76,7 +123,9 @@ def pulse(update, context):
 
 def loc(update, context):
     """Gimme your current location STUB"""
-    msg = "lat = xxx, lon = yyy️"
+    # hacky! -- get the first position on our trip
+    # you need to get the position in the duration
+    msg = trips[myslot][0]
     update.message.reply_text(msg)
 
 def alarm(context):
