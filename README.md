@@ -14,7 +14,7 @@ It accepts these commands:
 /sleep						# an iconic report of how they slept
 
 ## @devothertowbsend
-The dev bot lives here: [https://t.me/OtherTownsendBot](t.me/OtherTownsendBot)
+The dev bot lives here: [https://t.me/devothertowbsend_Bot](t.me/devothertowbsend_Bot)
 
 /start
 /set <n seconds>			# get OT updates every <n seconds>
