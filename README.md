@@ -6,23 +6,26 @@ This code lives on a server at Digital Ocean and serves up files for a Telegram 
 
 It accepts these commands:
 
+```
 /start
 /set <n seconds>			# get OT updates every <n seconds>
 /unset						# unset automatic updates
 /loc						# get current location
 /feeling					# an iconic report of current mood
 /sleep						# an iconic report of how they slept
+```
 
 ## @devothertowbsend
 The dev bot lives here: [https://t.me/devothertowbsend_Bot](t.me/devothertowbsend_Bot)
 
+```
 /start
 /set <n seconds>			# get OT updates every <n seconds>
 /unset						# unset automatic updates
 /loc						# get current location
 /feeling					# an iconic report of current mood
 /sleep						# an iconic report of how they slept
-
+```
 
 
 ## initial setup
