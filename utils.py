@@ -1,3 +1,12 @@
+from datetime import datetime
+import json, csv
+
+from shapely.geometry import Point
+from shapely.wkt import dumps, loads
+
+from vars import Person, Heart, Brain, Place, Step
+from vars import heartratedata, sleepdata, timepointdata, stepdata
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Utils 
 # from utils import gimmeLongLat, gimmeGeojson, gimmeSeconds, gimmecurseconds, gimmeclosestkv, gimmecurrsteps, gimmeclosestplace
@@ -102,7 +111,7 @@ def gimmeclosestplace():
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Build the Tables 
-# from utils import createPersondb, createHeartdb, createStepdb, createPlacedb
+# from utils import createPersondb, createHeartdb, createPlacedb, createStepdb
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 def createPersondb(mydb):
@@ -119,7 +128,7 @@ def createPersondb(mydb):
 # Create the HEART table.
 # Run this ONLY ONCE IN PRODUCTION!
 
-def createHeartdb(mydb):
+def createHeartdb(mydb,other):
     with open(heartratedata, 'r') as f:
         json_text = f.read()
 
@@ -139,30 +148,7 @@ def createHeartdb(mydb):
     print("Heart table is ready and 'beats' was created", created)
 
 
-# Create the HEART table.
-# Run this ONLY ONCE IN PRODUCTION!
-
-def createHeartdb(mydb):
-    with open(heartratedata, 'r') as f:
-        json_text = f.read()
-
-    heartrate_list = json.loads(json_text)
-
-    for rec in heartrate_list:
-        secs = gimmeSeconds(thetime=rec['time'], thefmt="%H:%M:%S", timeadjust=-7)
-        bpm = rec['value']['bpm']
-
-        try:
-            beats, created = Heart.get_or_create(actor=other, timestamp=secs, bpm=bpm)
-        except:
-            mydb.create_tables([Heart])
-            beats = Heart.create(actor=other, timestamp=secs, bpm=bpm)
-            beats.save()
-        
-    print("Heart table is ready and 'beats' was created", created)
-
-
-def createPlacedb(mydb):
+def createPlacedb(mydb,other):
     with open(timepointdata, 'r') as csvfile:
         csvreader = csv.reader(csvfile)
         # This skips the first row of the CSV file.
@@ -179,3 +165,21 @@ def createPlacedb(mydb):
     print("Place table is ready and 'steps' was created", created)
 
 
+def createStepdb(mydb,other):
+    with open(stepdata, 'r') as f:
+        json_text = f.read()
+
+    step_list = json.loads(json_text)
+
+    for rec in step_list:
+        secs = gimmeSeconds(rec['dateTime'], thefmt="%a %H:%M:%S", timeadjust=0)
+        val = rec['value']
+
+        try:
+            steps, created = Step.get_or_create(actor=other, timestamp=secs, steps=val)
+        except:
+            mydb.create_tables([Step])
+            steps = Step.create(actor=other, timestamp=secs, steps=val)
+            steps.save()
+        
+    print("Step table is ready and 'steps' was created", created)

@@ -33,9 +33,9 @@ from vars import pulses, trips, times
 from vars import Person, Heart, Brain, Place, Step
 from vars import heartratedata, sleepdata, timepointdata, stepdata
 from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
-from utils import , gimmeSeconds, gimmecurseconds, gimmeclosestkv
+from utils import gimmeSeconds, gimmecurseconds, gimmeclosestkv
 from utils import gimmecurrsteps, gimmeclosestplace, gimmebeats
-from utils import createPersondb, createHeartdb, createStepdb, createPlacedb
+from utils import createPersondb, createHeartdb, createPlacedb, createStepdb
 
 from _config import TOKEN, DEBUG
 
@@ -60,9 +60,9 @@ else:
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 other = createPersondb(mydb)
-createHeartdb(mydb)
-createStepdb(mydb)
-createPlacedb(mydb)
+createHeartdb(mydb,other)
+createStepdb(mydb,other)
+createPlacedb(mydb,other)
 
 # You don't want to run these on every query!
 heartrate_keylist = []

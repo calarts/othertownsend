@@ -1,13 +1,21 @@
 from datetime import time
 from peewee import *
 
+from _config import DEBUG
+
+if DEBUG:
+    mydb = SqliteDatabase(':memory:')
+else:
+    mydb = SqliteDatabase("other.db")
+
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # CLASSES from vars import Person, Heart, Brain, Place, Step
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 class BaseModel(Model):
     class Meta:
-        database = db
+        database = mydb
 
 class Person(BaseModel):
     name = CharField()
@@ -65,7 +73,7 @@ class Step(BaseModel):
 # VARIABLES from vars import heartratedata, sleepdata, timepointdata, stepdata
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
-heartratedata = "../data/heartrate.json"
+heartratedata = "data/heartrate.json"
 # this is 24 hours of heart-rate sampled on average every 2.76 seconds
 # time has the format "19:14:00" "%H:%M:%S"
 # appears to be UTC/GMT! Do we wnt to transform to local time? YES
@@ -78,15 +86,15 @@ heartratedata = "../data/heartrate.json"
 #   }
 # }
 
-sleepdata = "../data/sleep.json"
+sleepdata = "data/sleep.json"
 
 
-timepointdata = "../data/locations.csv"
+timepointdata = "data/locations.csv"
 # Start Time,End Time,Name,Latitude,Longitude
 # lat/lng has been transformed and spoofed for Northern CA
 # ten days were compressed into one for variety. 
 
-stepdata = "../data/steps_monday.json"
+stepdata = "data/steps_monday.json"
 # datetime has the format "Tue 19:14:00" "%a %H:%M:%S"
 # appears to be UTC/GMT
 
