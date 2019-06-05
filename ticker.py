@@ -25,7 +25,9 @@ import csv, sys, os
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
 from peewee import *
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import BaseFilter
+
 from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
 
@@ -166,6 +168,13 @@ def shutdown():
 def stop(update, context):
     threading.Thread(target=shutdown).start()
 
+
+def echo(update, context):
+    """Echo the user message."""
+    update.message.reply_text(update.message.text)
+
+
+
 def main():
     # """Run bot."""
     # Create the Updater and pass it your bot's token.
@@ -173,8 +182,22 @@ def main():
     # Post version 12 this will no longer be necessary
     updater = Updater(TOKEN, use_context=True)
 
+
+    class FilterFeel(BaseFilter):
+        def filter(self, message):
+            return 'do you feel?' in message.text
+
+    # Let's listen for specific questions: 
+    # How are you feeling/How do you feel/How has your day been? (Mood, BPM)
+    filter_feel = FilterFeel()
+    feel_handler = MessageHandler(filter_feel, echo)
+    
+
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
+
+    # listening
+    dp.add_handler(feel_handler)
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
