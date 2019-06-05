@@ -156,10 +156,16 @@ def createPlacedb(mydb,other):
         for row in csvreader:
             mypoint = Point(float(row[3]), float(row[4]))
             try:
-                tp, created = Place.get_or_create(actor=other, timestamp=gimmeSeconds(thetime=row[0], timeadjust=-7), point=dumps(mypoint), mode="WALK")
+                tp, created = Place.get_or_create(actor=other, 
+                	timestamp=gimmeSeconds(thetime=row[0], timeadjust=-7), 
+                	point=dumps(mypoint), 
+                	mode="WALK")
             except:
                 mydb.create_tables([Place])
-                tp = Place.create(actor=other, timestamp=gimmeSeconds(thetime=row[0], timeadjust=-7), point=dumps(mypoint), mode="WALK")
+                tp = Place.create(actor=other, 
+                	timestamp=gimmeSeconds(thetime=row[0], timeadjust=-7), 
+	                point=dumps(mypoint), 
+	                mode="WALK")
                 tp.save()
 
     print("Place table is ready and 'steps' was created", created)
