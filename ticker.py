@@ -1,13 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# THIS EXAMPLE HAS BEEN UPDATED TO WORK WITH THE BETA VERSION 12 OF PYTHON-TELEGRAM-BOT.
-# If you're still using version 11.1.0, please see the examples at
-# https://github.com/python-telegram-bot/python-telegram-bot/tree/v11.1.0/examples
 
 """
-Simple Bot to send timed Telegram messages.
-
 This Bot uses the Updater class to handle the bot and the JobQueue to send
 timed messages.
 
@@ -24,16 +19,25 @@ bot.
 import logging
 import threading
 from datetime import datetime, date, timedelta, time
-import json
+import simplejson as json
+import csv, sys, os
 
+from shapely.geometry import Point
+from shapely.wkt import dumps, loads
+from peewee import *
 from telegram.ext import Updater, CommandHandler
 from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
 
 from vars import pulses, trips, times
+from vars import Person, Heart, Brain, Place, Step
+from vars import heartratedata, sleepdata, timepointdata, stepdata
+from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
+from utils import gimmeSeconds, gimmecurseconds, gimmeclosestkv
+from utils import gimmecurrsteps, gimmeclosestplace, gimmebeats
+from utils import createPersondb, createHeartdb, createPlacedb, createStepdb
 
-
-from _config import TOKEN
+from _config import TOKEN, DEBUG
 
 # Enable logging
 logging.FileHandler('logs/tickererror.log')
@@ -43,121 +47,74 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-heartrate_file = "data/heart_rate-2019-01-06.json"
-pulserecord = {}
+timestr = datetime.now().strftime("%H:%M:%S")
 
-with open(heartrate_file) as json_file:  
-    data = json.load(json_file)
-    for p in data:
-        do = datetime.strptime(p['dateTime'], '%m/%d/%y %H:%M:%S')
-        myseconds = (do.hour*3600)+(do.minute*60)+(do.second)
-        pulserecord[myseconds]=str(p['value']['bpm'])
-
-sortedpulse = dict(sorted(pulserecord.items()))
+if DEBUG:
+    mydb = SqliteDatabase(':memory:')
+else:
+    mydb = SqliteDatabase("other.db")
 
 
-def time_in_range(start, end, x):
-    """Return true if x is in the range [start, end]"""
-    if start <= end:
-        return start <= x <= end
-    else:
-        return start <= x or x <= end
-    
-def gimmeTimedelta(s):
-    return int(timedelta(hours=s.hour, minutes=s.minute, seconds=s.second).total_seconds())
+# # # # # # # # # # # # # # # # # # # # # # # # # # 
+# create the tables and populate them if necessary
+# # # # # # # # # # # # # # # # # # # # # # # # # # 
 
-def gimmeLongLat(stups):
-    # ugh, must reverse lat and lng
-    revtups = []
-    for tup in stups:
-        revtups.append(tup[::-1])
-    return revtups
+other = createPersondb(mydb)
+createHeartdb(mydb,other)
+createStepdb(mydb,other)
+createPlacedb(mydb,other)
 
-def gimmeGeojson(atrip,myloc):
-    feature_collection = []
-    # ugh, must reverse lat and lng
-    revtups = gimmeLongLat(atrip)
-    myline = LineString(revtups)
-    mylocrev = Point( gimmeLongLat([myloc])[0] )
-    mylocrevfeature = Feature(geometry=mylocrev,name="my current point")
-    mylinefeature = Feature(geometry=myline,name="my trip")
-    feature_collection = [mylocrevfeature,mylinefeature]
-    myfeaturecollection = FeatureCollection(feature_collection)
-    return myfeaturecollection
+# You don't want to run these on every query!
+heartrate_keylist = []
+q = Heart.select(Heart.timestamp)
+for t in q:
+    heartrate_keylist.append( int(t.timestamp) )
 
-def get_curtimeslot(timeslots):
-    curtime = datetime.now().time()
-    for idx,slot in enumerate(timeslots):
-        if time_in_range(slot['start'], slot['end'], curtime):
-            myslot = idx
-            t1 = gimmeTimedelta(slot['start'])
-            t2 = gimmeTimedelta(slot['end'])
-            ct = gimmeTimedelta(curtime)
-            duration = int(t2-t1)
-            numchunks = len(trips[myslot])
-            interval = int(duration/numchunks)
-            timeintotrip = int(ct-t1)
-            for i in range( numchunks ):
-                chunkpoint = int(interval * i)
-                if (timeintotrip > chunkpoint) and (timeintotrip-chunkpoint < interval):
-                    myloc = trips[myslot][i]
-            myfeaturecollection = gimmeGeojson(trips[myslot],myloc)
-    return(curtime,myslot,duration,timeintotrip,myloc,myfeaturecollection)
-    
+# You don't want to run this on every query
+step_keylist = []
+q = Step.select(Step.timestamp)
+for t in q:
+    step_keylist.append( int(t.timestamp) )
 
-curtime,myslot,duration,timeintotrip,myloc,myfeaturecollection = get_curtimeslot(times)
 
-# get the pulse
-def getpulsenow():
-    rightnow = datetime.now()
-    midnight = datetime.combine(rightnow.date(), time())
-    mysecs = (rightnow - midnight).seconds
- 
-    # lookup the heartrate at this time:
-    # min(myList, key=lambda x:abs(x-mysecs))
-    mypulse = sortedpulse[mysecs] if mysecs in sortedpulse else sortedpulse[min(sortedpulse.keys(), key=lambda k: abs(k-mysecs))]
-    timestr = datetime.now().strftime("%H:%M:%S")
-    return mypulse, timestr
-
-# Define a few command handlers. These usually take the two arguments bot and
+# # # # # # # # # # # # # # # # # # # # # # # # # # 
+# Define the command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
+# # # # # # # # # # # # # # # # # # # # # # # # # # 
+
 def start(update, context):
     update.message.reply_text('Hi! Use /set <seconds> to set a timer')
     
 def pulse(update, context):
     """Gimme your current heart-rate"""
-    mypulse, timestr = getpulsenow()
+    mypulse = gimmebeats(heartrate_keylist)
     msg = "♥ " + str(mypulse) + " BPM ("+timestr+")️"
     update.message.reply_text(msg)
 
 def feeling(update, context):
     """Gimme your current mood"""
-    mypulse, timestr = getpulsenow()
-    feelings = ["💜","💜","💜","💜","💜","💜","💜","💛","💛","💛","💛","💛","💜","💜","💜","💜","💜","💛",]
-    msg = str(feelings[myslot]) + " ("+timestr+")️"
+    mypulse = gimmebeats(heartrate_keylist)
+    msg = str(gimmeFeelings()[0]) + " ("+timestr+")️"
     update.message.reply_text(msg)
 
 def sleep(update, context):
     """Gimme your current heart-rate"""
-    mypulse, timestr = getpulsenow()
-    sleeps = ["➖","➖","➖","➖","➖","〰️","〰️","〰️","〰️","〰️","〰️","〰️","➖","➖","➖","➖","➖","〰️",]
-    msg = str(sleeps[myslot]) + " ("+timestr+")️"
+    mypulse = gimmebeats(heartrate_keylist)
+    msg = str(gimmeFeelings()[1]) + " ("+timestr+")️"
     update.message.reply_text(msg)
 
 def loc(update, context):
     """Gimme your current location STUB"""
     # hacky! -- get the first position on our trip
     # you need to get the position in the duration
-    msg = trips[myslot][0]
+    msg = gimmeclosestplace()
     update.message.reply_text(msg)
 
 def alarm(context):
     """Send the alarm message."""
     job = context.job
-    mypulse, timestr = getpulsenow()
-    feelings = ["💜","💜","💜","💜","💜","💜","💜","💛","💛","💛","💛","💛","💜","💜","💜","💜","💜","💛",]
-    sleeps = ["➖","➖","➖","➖","➖","〰️","〰️","〰️","〰️","〰️","〰️","〰️","➖","➖","➖","➖","➖","〰️",]
-    msg = str(feelings[myslot]) + str(sleeps[myslot]) + str(trips[myslot][0]) + str(mypulse) + " BPM ("+ str(timestr) +")"
+    mypulse = gimmebeats(heartrate_keylist)
+    msg = str(gimmeFeelings()[0]) + str(gimmeFeelings()[1]) + str(gimmeclosestplace()) + str(mypulse) + " BPM ("+ str(timestr) +")"
     context.bot.send_message(job.context, text=msg)
 
 
