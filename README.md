@@ -15,7 +15,7 @@ The Other can answer a few questions. Try asking them:
 
 They also accept these commands:
 
-````
+```
 /start
 /set <n seconds>			# get OT updates every <n seconds>
 /unset						# unset automatic updates
