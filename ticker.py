@@ -195,8 +195,8 @@ def reply_withsleep(update, context):
     update.message.reply_text(msg)
 
 def reply_withphoto(update,context):
-	"""Where are you? Send a photo of a place."""
-	images = ["media/37.64961_-122.45323.jpg",
+    """Where are you? Send a photo of a place."""
+    images = ["media/37.64961_-122.45323.jpg",
 				"media/37.7919_-122.4038.jpg",
 				"media/37.914996_-122.533479.jpg",
 				"media/37.74006_-121.95199.jpg",
@@ -205,12 +205,11 @@ def reply_withphoto(update,context):
 				"media/37.77838_-122.389240.jpg",
 				"media/37.905995_-122.554277.jpg",
 				"media/IMG_20190513_180534.jpg"]
-				
     # 	update.message.reply_photo(photo=open(choice(images), 'rb'))
-    msg = gimmeclosestplace()
+    msg = str(gimmeclosestplace())
     update.message.reply_text(msg)
-
-
+    
+    
 def main():
     # """Run bot."""
     # Create the Updater and pass it your bot's token.
