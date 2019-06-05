@@ -207,7 +207,7 @@ def reply_withphoto(update,context):
 				"media/IMG_20190513_180534.jpg"]
 				
 # 	update.message.reply_photo(photo=open(choice(images), 'rb'))
-    msg = gimmeclosestplace() + "https://www.evernote.com/l/ADOgx-3b4kRBz5jFtrDFCwIwHGQ50KU6WbkB/image.png"
+    msg = gimmeclosestplace()
     update.message.reply_text(msg)
 
 
