@@ -21,6 +21,7 @@ import threading
 from datetime import datetime, date, timedelta, time
 import simplejson as json
 import csv, sys, os
+from random import choice
 
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
@@ -172,16 +173,41 @@ def stop(update, context):
 def reply_withfeeling(update, context):
     """How do you feel?"""
     mypulse = gimmebeats(heartrate_keylist)
+    
+    replies = ["Thanks for asking! I feel great. ",
+    			"I'm doing prety well today, thanks! ",
+    			"Good, see for yourself. ",
+    			"What could go wrong with stats like these? ",
+    			"Never better! ",
+    			"Good! Why do you ask? ",
+    			"See for yourself! ",
+    			"Great! ",
+    			"Check me out! ",
+    			"Good, thanks. "
+    			""]
 
-    msg = "I feel " + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
+    msg = random.choice(replies) + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
     update.message.reply_text(msg)
 
 def reply_withsleep(update, context):
-    """How do you feel?"""
+    """How did you sleep?"""
     msg = str(gimmeFeelings()[1])
     update.message.reply_text(msg)
 
-
+def reply_withphoto(update,context):
+	"""Where are you? Send a photo of a place."""
+	images = ["media/37.64961_-122.45323.jpg",
+				"media/37.7919_-122.4038.jpg",
+				"media/37.914996_-122.533479.jpg",
+				"media/37.74006_-121.95199.jpg",
+				"media/37.880985_-122.526087.jpg",
+				"media/37.927329_-122.580594.jpg",
+				"media/37.77838_-122.389240.jpg",
+				"media/37.905995_-122.554277.jpg",
+				"media/IMG_20190513_180534.jpg"]
+				
+	update.message.bot.send_photo(chat_id=update.message.chat_id,
+		photo=open(random.choice(images), 'rb'))
 
 def main():
     # """Run bot."""
@@ -193,7 +219,23 @@ def main():
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     # Let's listen for specific questions:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+    
+    # Where are you?
+    class FilterWhere(BaseFilter):
+        def filter(self, message):
+            return 'Where are you?' in message.text
 
+    # Where are you?
+    class FilterWheresimple(BaseFilter):
+        def filter(self, message):
+            return 'where ' in message.text
+
+    filter_where = FilterWhere()
+    filter_wheresimple = FilterWheresimple()
+
+    feel_handler = MessageHandler(filter_where | filter_wheresimple, reply_withphoto)
+    
+    
     # Many questions about feelings, same response
     # How are you feeling/How do you feel/How has your day been? (Mood, BPM)
 
