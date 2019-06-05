@@ -186,7 +186,7 @@ def reply_withfeeling(update, context):
     			"Good, thanks. "
     			""]
 
-    msg = random.choice(replies) + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
+    msg = choice(replies) + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
     update.message.reply_text(msg)
 
 def reply_withsleep(update, context):
@@ -207,7 +207,7 @@ def reply_withphoto(update,context):
 				"media/IMG_20190513_180534.jpg"]
 				
 	update.message.bot.send_photo(chat_id=update.message.chat_id,
-		photo=open(random.choice(images), 'rb'))
+		photo=open(choice(images), 'rb'))
 
 def main():
     # """Run bot."""
