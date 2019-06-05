@@ -206,7 +206,7 @@ def reply_withphoto(update,context):
 				"media/37.905995_-122.554277.jpg",
 				"media/IMG_20190513_180534.jpg"]
 				
-# 	update.message.reply_photo(photo=open(choice(images), 'rb'))
+    # 	update.message.reply_photo(photo=open(choice(images), 'rb'))
     msg = gimmeclosestplace()
     update.message.reply_text(msg)
 
