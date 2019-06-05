@@ -25,7 +25,9 @@ import csv, sys, os
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
 from peewee import *
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import BaseFilter
+
 from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
 
@@ -166,6 +168,21 @@ def shutdown():
 def stop(update, context):
     threading.Thread(target=shutdown).start()
 
+
+def reply_withfeeling(update, context):
+    """How do you feel?"""
+    mypulse = gimmebeats(heartrate_keylist)
+
+    msg = "I feel " + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
+    update.message.reply_text(msg)
+
+def reply_withsleep(update, context):
+    """How do you feel?"""
+    msg = str(gimmeFeelings()[1])
+    update.message.reply_text(msg)
+
+
+
 def main():
     # """Run bot."""
     # Create the Updater and pass it your bot's token.
@@ -173,8 +190,47 @@ def main():
     # Post version 12 this will no longer be necessary
     updater = Updater(TOKEN, use_context=True)
 
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+    # Let's listen for specific questions:
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+    # Many questions about feelings, same response
+    # How are you feeling/How do you feel/How has your day been? (Mood, BPM)
+
+    class FilterFeel(BaseFilter):
+        def filter(self, message):
+            return 'you feel?' in message.text
+
+    class FilterFeeling(BaseFilter):
+        def filter(self, message):
+            return 'you feeling?' in message.text
+
+    class DayBeen(BaseFilter):
+        def filter(self, message):
+            return 'day been?' in message.text
+
+    filter_feel = FilterFeel()
+    filter_feeling = FilterFeeling()
+    day_been = DayBeen()
+    feel_handler = MessageHandler(filter_feel | filter_feeling | day_been, reply_withfeeling)
+    
+
+    # One question about sleep, same response
+    # How did you sleep? (sleep)
+    class FilterSleep(BaseFilter):
+        def filter(self, message):
+            return 'you sleep?' in message.text
+
+    filter_sleep = FilterSleep()
+    sleep_handler = MessageHandler(filter_sleep, reply_withsleep)
+
+
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
+
+    # listening for "feelins" and "sleep"
+    dp.add_handler(feel_handler)
+    dp.add_handler(sleep_handler)
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
