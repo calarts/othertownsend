@@ -196,16 +196,16 @@ def reply_withsleep(update, context):
 
 def reply_withphoto(update,context):
     """Where are you? Send a photo of a place."""
-    images = ["media/37.64961_-122.45323.jpg",
-				"media/37.7919_-122.4038.jpg",
-				"media/37.914996_-122.533479.jpg",
-				"media/37.74006_-121.95199.jpg",
-				"media/37.880985_-122.526087.jpg",
-				"media/37.927329_-122.580594.jpg",
-				"media/37.77838_-122.389240.jpg",
-				"media/37.905995_-122.554277.jpg",
-				"media/IMG_20190513_180534.jpg"]
-    # 	update.message.reply_photo(photo=open(choice(images), 'rb'))
+	#     imgs = ["media/37.64961_-122.45323.jpg",
+	# 				"media/37.7919_-122.4038.jpg",
+	# 				"media/37.914996_-122.533479.jpg",
+	# 				"media/37.74006_-121.95199.jpg",
+	# 				"media/37.880985_-122.526087.jpg",
+	# 				"media/37.927329_-122.580594.jpg",
+	# 				"media/37.77838_-122.389240.jpg",
+	# 				"media/37.905995_-122.554277.jpg",
+	# 				"media/IMG_20190513_180534.jpg"]
+    # 	update.message.reply_photo(photo=open(choice(imgs), 'rb'))
     msg = str(gimmeclosestplace())
     update.message.reply_text(msg)
     
@@ -229,12 +229,12 @@ def main():
     # Where are you?
     class FilterWheresimple(BaseFilter):
         def filter(self, message):
-            return 'where ' in message.text
+            return 'where' in message.text
 
     filter_where = FilterWhere()
     filter_wheresimple = FilterWheresimple()
 
-    feel_handler = MessageHandler(filter_where | filter_wheresimple, reply_withphoto)
+    where_handler = MessageHandler(filter_where | filter_wheresimple, reply_withphoto)
     
     
     # Many questions about feelings, same response
@@ -274,6 +274,7 @@ def main():
     # listening for "feelins" and "sleep"
     dp.add_handler(feel_handler)
     dp.add_handler(sleep_handler)
+    dp.add_handler(where_handler)
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
