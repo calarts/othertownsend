@@ -4,25 +4,38 @@
 ## @theothertownsend
 This code lives on a server at Digital Ocean and serves up files for a Telegram bot, [t.me/OtherTownsendBot](https://t.me/OtherTownsendBot)
 
-It accepts these commands:
+The Other can answer a few questions. Try asking them:
 
+
+ - How are you feeling?
+ - How did you sleep?
+ - Where are you?
+
+
+
+They also accept these commands:
+
+````
 /start
 /set <n seconds>			# get OT updates every <n seconds>
 /unset						# unset automatic updates
 /loc						# get current location
 /feeling					# an iconic report of current mood
 /sleep						# an iconic report of how they slept
+```
+
 
 ## @devothertowbsend
-The dev bot lives here: [https://t.me/devothertowbsend_Bot](t.me/devothertowbsend_Bot)
+The dev bot lives here: [https://t.me/devothertowbsend_Bot](t.me/devothertowbsend_Bot) and their commands are much the same:
 
+```
 /start
 /set <n seconds>			# get OT updates every <n seconds>
 /unset						# unset automatic updates
 /loc						# get current location
 /feeling					# an iconic report of current mood
 /sleep						# an iconic report of how they slept
-
+```
 
 
 ## initial setup
