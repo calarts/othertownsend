@@ -169,9 +169,17 @@ def stop(update, context):
     threading.Thread(target=shutdown).start()
 
 
-def echo(update, context):
-    """Echo the user message."""
-    update.message.reply_text(update.message.text)
+def reply_withfeeling(update, context):
+    """How do you feel?"""
+    mypulse = gimmebeats(heartrate_keylist)
+
+    msg = "I feel " + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
+    update.message.reply_text(msg)
+
+def reply_withsleep(update, context):
+    """How do you feel?"""
+    msg = str(gimmeFeelings()[1])
+    update.message.reply_text(msg)
 
 
 
@@ -182,22 +190,47 @@ def main():
     # Post version 12 this will no longer be necessary
     updater = Updater(TOKEN, use_context=True)
 
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+    # Let's listen for specific questions:
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+    # Many questions about feelings, same response
+    # How are you feeling/How do you feel/How has your day been? (Mood, BPM)
 
     class FilterFeel(BaseFilter):
         def filter(self, message):
-            return 'do you feel?' in message.text
+            return 'you feel?' in message.text
 
-    # Let's listen for specific questions: 
-    # How are you feeling/How do you feel/How has your day been? (Mood, BPM)
+    class FilterFeeling(BaseFilter):
+        def filter(self, message):
+            return 'you feeling?' in message.text
+
+    class DayBeen(BaseFilter):
+        def filter(self, message):
+            return 'day been?' in message.text
+
     filter_feel = FilterFeel()
-    feel_handler = MessageHandler(filter_feel, echo)
+    filter_feeling = FilterFeeling()
+    day_been = DayBeen()
+    feel_handler = MessageHandler(filter_feel | filter_feeling | day_been, reply_withfeeling)
     
+
+    # One question about sleep, same response
+    # How did you sleep? (sleep)
+    class FilterSleep(BaseFilter):
+        def filter(self, message):
+            return 'you sleep?' in message.text
+
+    filter_sleep = FilterSleep()
+    sleep_handler = MessageHandler(filter_sleep, reply_withsleep)
+
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # listening
+    # listening for "feelins" and "sleep"
     dp.add_handler(feel_handler)
+    dp.add_handler(sleep_handler)
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
