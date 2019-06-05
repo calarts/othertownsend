@@ -21,6 +21,7 @@ import threading
 from datetime import datetime, date, timedelta, time
 import simplejson as json
 import csv, sys, os
+from random import choice
 
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
@@ -172,17 +173,34 @@ def stop(update, context):
 def reply_withfeeling(update, context):
     """How do you feel?"""
     mypulse = gimmebeats(heartrate_keylist)
+    
+    replies = ["Thanks for asking! I feel great. ",
+    			"I'm doing prety well today, thanks! ",
+    			"Good, see for yourself. ",
+    			"What could go wrong with stats like these? ",
+    			"Never better! ",
+    			"Good! Why do you ask? ",
+    			"See for yourself! ",
+    			"Great! ",
+    			"Check me out! ",
+    			"Good, thanks. "
+    			""]
 
-    msg = "I feel " + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
+    msg = choice(replies) + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
     update.message.reply_text(msg)
 
 def reply_withsleep(update, context):
-    """How do you feel?"""
+    """How did you sleep?"""
     msg = str(gimmeFeelings()[1])
     update.message.reply_text(msg)
 
-
-
+def reply_withphoto(update,context):
+    """Where are you? Send a photo of a place."""
+    imgs = ["media/37.64961_-122.45323.jpg"]
+    #     msg = str(gimmeclosestplace())
+    #     update.message.reply_text(msg)
+    update.message.reply_photo(photo=open(choice(imgs), 'rb'))    
+    
 def main():
     # """Run bot."""
     # Create the Updater and pass it your bot's token.
@@ -193,7 +211,23 @@ def main():
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     # Let's listen for specific questions:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+    
+    # Where are you?
+    class FilterWhere(BaseFilter):
+        def filter(self, message):
+            return 'Where are you?' in message.text
 
+    # Where are you?
+    class FilterWheresimple(BaseFilter):
+        def filter(self, message):
+            return 'where' in message.text
+
+    filter_where = FilterWhere()
+    filter_wheresimple = FilterWheresimple()
+
+    where_handler = MessageHandler(filter_where | filter_wheresimple, reply_withphoto)
+    
+    
     # Many questions about feelings, same response
     # How are you feeling/How do you feel/How has your day been? (Mood, BPM)
 
@@ -231,6 +265,7 @@ def main():
     # listening for "feelins" and "sleep"
     dp.add_handler(feel_handler)
     dp.add_handler(sleep_handler)
+    dp.add_handler(where_handler)
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
