@@ -3,17 +3,19 @@
 #
 
 """
-This Bot uses the Updater class to handle the bot and the JobQueue to send
-timed messages.
+This Bot uses the Updater class to handle the bot 
+and the JobQueue to send timed messages.
 
-First, a few handler functions are defined. Then, those functions are passed to
-the Dispatcher and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
+First, a few handler functions are defined. 
+Then, those functions are passed to the Dispatcher 
+and registered at their respective places.
+Then, the bot is started and runs 
+until we press Ctrl-C on the command line.
 
 Usage:
 Basic Alarm Bot example, sends a message after a set time.
-Press Ctrl-C on the command line or send a signal to the process to stop the
-bot.
+Press Ctrl-C on the command line or send a signal 
+to the process to stop the bot.
 """
 
 import logging
@@ -26,19 +28,22 @@ from random import choice
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
 from peewee import *
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from telegram.ext import BaseFilter
+from telegram.ext import Updater, CommandHandler, MessageHandler
+from telegram.ext import BaseFilter, Filters
 
 from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
 
 from vars import pulses, trips, times
-from vars import Person, Heart, Brain, Place, Step
+from vars import Person, Heart, Brain, Place, Step, Look
 from vars import heartratedata, sleepdata, timepointdata, stepdata
 from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
 from utils import gimmeSeconds, gimmecurseconds, gimmeclosestkv
 from utils import gimmecurrsteps, gimmeclosestplace, gimmebeats
-from utils import createPersondb, createHeartdb, createPlacedb, createStepdb
+from utils import createPersondb, createHeartdb, gimmecurrlooks
+from utils import createPlacedb, createStepdb, createLookdb
+from commands import error, start, pulse, feeling, sleep, loc
+from commands import alarm, set_timer, unset, shutdown, stop
 
 from _config import TOKEN, DEBUG
 
@@ -66,6 +71,7 @@ other = createPersondb(mydb)
 createHeartdb(mydb,other)
 createStepdb(mydb,other)
 createPlacedb(mydb,other)
+createLookdb(mydb,other)
 
 # You don't want to run these on every query!
 heartrate_keylist = []
@@ -81,101 +87,16 @@ for t in q:
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
-# Define the command handlers. These usually take the two arguments bot and
-# update. Error handlers also receive the raised TelegramError object in error.
+# conversations
+# 
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
-
-def start(update, context):
-    update.message.reply_text('Hi! Use /set <seconds> to set a timer')
-    
-def pulse(update, context):
-    """Gimme your current heart-rate"""
-    mypulse = gimmebeats(heartrate_keylist)
-    msg = "♥ " + str(mypulse) + " BPM ("+timestr+")️"
-    update.message.reply_text(msg)
-
-def feeling(update, context):
-    """Gimme your current mood"""
-    mypulse = gimmebeats(heartrate_keylist)
-    msg = str(gimmeFeelings()[0]) + " ("+timestr+")️"
-    update.message.reply_text(msg)
-
-def sleep(update, context):
-    """Gimme your current heart-rate"""
-    mypulse = gimmebeats(heartrate_keylist)
-    msg = str(gimmeFeelings()[1]) + " ("+timestr+")️"
-    update.message.reply_text(msg)
-
-def loc(update, context):
-    """Gimme your current location STUB"""
-    # hacky! -- get the first position on our trip
-    # you need to get the position in the duration
-    msg = gimmeclosestplace()
-    update.message.reply_text(msg)
-
-def alarm(context):
-    """Send the alarm message."""
-    job = context.job
-    mypulse = gimmebeats(heartrate_keylist)
-    msg = str(gimmeFeelings()[0]) + str(gimmeFeelings()[1]) + str(gimmeclosestplace()) + str(mypulse) + " BPM ("+ str(timestr) +")"
-    context.bot.send_message(job.context, text=msg)
-
-
-def set_timer(update, context):
-    """Add a job to the queue."""
-    chat_id = update.message.chat_id
-    try:
-        # args[0] should contain the time for the timer in seconds
-        due = int(context.args[0])
-        if due < 0:
-            update.message.reply_text('Sorry we can not go back to future!')
-            return
-
-        # Add job to queue
-        # job = context.job_queue.run_once(alarm, due, context=chat_id)
-        job = context.job_queue.run_repeating(alarm, due, context=chat_id)
-        
-        context.chat_data['job'] = job
-
-        update.message.reply_text('👍')
-
-    except (IndexError, ValueError):
-        update.message.reply_text('Usage: /set <seconds>')
-
-
-def unset(update, context):
-    """Remove the job if the user changed their mind."""
-    if 'job' not in context.chat_data:
-        update.message.reply_text('You have no active timer')
-        return
-
-    job = context.chat_data['job']
-    job.schedule_removal()
-    del context.chat_data['job']
-
-    update.message.reply_text('Timer successfully unset!')
-
-
-def error(update, context):
-    """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
-    # context.bot.send_message(context, text='Update "%s" caused error "%s"', update, context.error)
-    
-def shutdown():
-    # context.bot.send_message(job.context, text='Stopping...')
-    updater.stop()
-    updater.is_idle = False
-    
-def stop(update, context):
-    threading.Thread(target=shutdown).start()
-
 
 def reply_withfeeling(update, context):
     """How do you feel?"""
     mypulse = gimmebeats(heartrate_keylist)
     
     replies = ["Thanks for asking! I feel great. ",
-    			"I'm doing prety well today, thanks! ",
+    			"I'm doing pretty well today, thanks! ",
     			"Good, see for yourself. ",
     			"What could go wrong with stats like these? ",
     			"Never better! ",
@@ -196,11 +117,25 @@ def reply_withsleep(update, context):
 
 def reply_withphoto(update,context):
     """Where are you? Send a photo of a place."""
-    imgs = ["media/37.64961_-122.45323.jpg"]
-    #     msg = str(gimmeclosestplace())
-    #     update.message.reply_text(msg)
-    update.message.reply_photo(photo=open(choice(imgs), 'rb'))    
-    
+    imgs = ["media/37.64961_-122.45323.jpg",
+            "media/37.7919_-122.4038.jpg",
+            "media/37.914996_-122.533479.jpg"
+            "media/37.74006_-121.95199.jpg",
+            "media/37.880985_-122.526087.jpg",
+            "media/37.927329_-122.580594.jpg"
+            "media/37.77838_-122.389240.jpg",
+            "media/37.905995_-122.554277.jpg"]
+
+    update.message.reply_photo(photo=open(choice(imgs), 'rb'))
+
+
+def reply_withhtml(update,context):
+    """What are you looking at?"""
+    looklist = gimmecurrlooks()
+    lk = choice(looklist)
+    update.message.reply_html( str(lk) )
+
+ 
 def main():
     # """Run bot."""
     # Create the Updater and pass it your bot's token.
@@ -210,8 +145,20 @@ def main():
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     # Let's listen for specific questions:
+    # ADD LOOKS!
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     
+    # What are you looking at??
+    class FilterLook(BaseFilter):
+        def filter(self, message):
+            return 'looking at?' in message.text
+
+    filter_look = FilterLook()
+    
+    look_handler = MessageHandler(filter_look, reply_withhtml)
+    
+
+
     # Where are you?
     class FilterWhere(BaseFilter):
         def filter(self, message):
@@ -266,6 +213,7 @@ def main():
     dp.add_handler(feel_handler)
     dp.add_handler(sleep_handler)
     dp.add_handler(where_handler)
+    dp.add_handler(look_handler)
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
