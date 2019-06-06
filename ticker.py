@@ -33,12 +33,12 @@ from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
 
 from vars import pulses, trips, times
-from vars import Person, Heart, Brain, Place, Step
+from vars import Person, Heart, Brain, Place, Step, Look
 from vars import heartratedata, sleepdata, timepointdata, stepdata
 from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
 from utils import gimmeSeconds, gimmecurseconds, gimmeclosestkv
 from utils import gimmecurrsteps, gimmeclosestplace, gimmebeats
-from utils import createPersondb, createHeartdb, createPlacedb, createStepdb
+from utils import createPersondb, createHeartdb, createPlacedb, createStepdb, createLookdb
 
 from _config import TOKEN, DEBUG
 
@@ -66,6 +66,7 @@ other = createPersondb(mydb)
 createHeartdb(mydb,other)
 createStepdb(mydb,other)
 createPlacedb(mydb,other)
+createLookdb(mydb,other)
 
 # You don't want to run these on every query!
 heartrate_keylist = []
@@ -210,6 +211,7 @@ def main():
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     # Let's listen for specific questions:
+    # ADD LOOKS!
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     
     # Where are you?

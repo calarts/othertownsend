@@ -10,7 +10,8 @@ else:
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-# CLASSES from vars import Person, Heart, Brain, Place, Step
+# CLASSES 
+# from vars import Person, Heart, Brain, Place, Step, Look
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 class BaseModel(Model):
@@ -68,9 +69,17 @@ class Step(BaseModel):
     timestamp = IntegerField()
 
 
+class Look(BaseModel):
+    # do we count steps individually
+    # or count them in a 24 hour period?
+    actor = ForeignKeyField(Person, backref='looks')
+    look = CharField()
+    link = CharField()
+    # timestamp = IntegerField()
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-# VARIABLES from vars import heartratedata, sleepdata, timepointdata, stepdata
+# VARIABLES 
+# from vars import heartratedata, sleepdata, timepointdata, stepdata, lookdata
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 heartratedata = "data/heartrate.json"
@@ -87,6 +96,8 @@ heartratedata = "data/heartrate.json"
 # }
 
 sleepdata = "data/sleep.json"
+
+lookdata = "data/amazon.csv"
 
 
 timepointdata = "data/locations.csv"

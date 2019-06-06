@@ -4,8 +4,8 @@ import json, csv
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
 
-from vars import Person, Heart, Brain, Place, Step
-from vars import heartratedata, sleepdata, timepointdata, stepdata
+from vars import Person, Heart, Brain, Place, Step, Look
+from vars import heartratedata, sleepdata, timepointdata, stepdata, lookdata
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Utils 
@@ -111,7 +111,7 @@ def gimmeclosestplace():
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Build the Tables 
-# from utils import createPersondb, createHeartdb, createPlacedb, createStepdb
+# from utils import createPersondb, createHeartdb, createPlacedb, createStepdb, CreateLookdb
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 def createPersondb(mydb):
@@ -169,6 +169,24 @@ def createPlacedb(mydb,other):
                 tp.save()
 
     print("Place table is ready and 'steps' was created", created)
+
+
+def createLookdb(mydb,other):
+    with open(lookdata, 'r') as csvfile:
+        csvreader = csv.reader(csvfile)
+        # This skips the first row of the CSV file.
+        next(csvreader)
+        for row in csvreader:
+            look = str(row[0])
+            link = str(row[1])
+            try:
+                mylook, created = Look.get_or_create(actor=other,look=look,link=link)
+            except:
+                mydb.create_tables([Look])
+                mylook = Look.create(actor=other,look=look,link=link)
+                mylook.save()
+
+    print("Look table is ready and 'looks' was created", created)
 
 
 def createStepdb(mydb,other):
