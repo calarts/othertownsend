@@ -200,8 +200,14 @@ def reply_withphoto(update,context):
     imgs = ["media/37.64961_-122.45323.jpg"]
     #     msg = str(gimmeclosestplace())
     #     update.message.reply_text(msg)
-    update.message.reply_photo(photo=open(choice(imgs), 'rb'))    
-    
+    update.message.reply_photo(photo=open(choice(imgs), 'rb'))
+
+
+def reply_withhtml(update,context):
+    """What are you looking at?"""
+    update.message.reply_html("<a href='https://amzn.com/B004X2M3N8'>TEST Doctor Who Season 6</a>")
+
+ 
 def main():
     # """Run bot."""
     # Create the Updater and pass it your bot's token.
@@ -214,6 +220,17 @@ def main():
     # ADD LOOKS!
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     
+    # What are you looking at??
+    class FilterLook(BaseFilter):
+        def filter(self, message):
+            return 'looking at?' in message.text
+
+    filter_look = FilterLook()
+    
+    look_handler = MessageHandler(filter_look, reply_withhtml)
+    
+
+
     # Where are you?
     class FilterWhere(BaseFilter):
         def filter(self, message):
@@ -268,6 +285,7 @@ def main():
     dp.add_handler(feel_handler)
     dp.add_handler(sleep_handler)
     dp.add_handler(where_handler)
+    dp.add_handler(look_handler)
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
