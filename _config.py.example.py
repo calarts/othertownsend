@@ -8,3 +8,4 @@
 # /setinline 
 # /setuserpic
 TOKEN = "746808563:klsadlkjasldkjlaksjdlasd" 
+DEBUG = True
