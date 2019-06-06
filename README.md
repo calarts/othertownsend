@@ -10,6 +10,7 @@ The Other can answer a few questions. Try asking them:
  - How are you feeling?
  - How did you sleep?
  - Where are you?
+ - What have you been looking at?
 
 
 
@@ -35,7 +36,20 @@ The dev bot lives here: [https://t.me/devothertowbsend_Bot](t.me/devothertowbsen
 /loc						# get current location
 /feeling					# an iconic report of current mood
 /sleep						# an iconic report of how they slept
+/shop						# what they are shopping for
 ```
+
+We are adding an proactive healthcare interface to monitor:
+
+ - weight
+ - blood pressure
+ - ECG (electrocardiogram)
+ - atrial fibrillation
+ - blood sugar levels (hyperglycemia and hypoglycemia)
+ - calories consumed
+ - steps taken
+
+ Data may be uploaded via a WiFi and cellular networks to proactive healthcare and insurance providers.
 
 
 ## initial setup
