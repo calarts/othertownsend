@@ -40,7 +40,7 @@ from vars import heartratedata, sleepdata, timepointdata, stepdata
 from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
 from utils import gimmeSeconds, gimmecurseconds, gimmeclosestkv
 from utils import gimmecurrsteps, gimmeclosestplace, gimmebeats
-from utils import createPersondb, createHeartdb
+from utils import createPersondb, createHeartdb, gimmecurrlooks
 from utils import createPlacedb, createStepdb, createLookdb
 from commands import error, start, pulse, feeling, sleep, loc
 from commands import alarm, set_timer, unset, shutdown, stop
@@ -124,15 +124,16 @@ def reply_withphoto(update,context):
             "media/37.880985_-122.526087.jpg",
             "media/37.927329_-122.580594.jpg"
             "media/37.77838_-122.389240.jpg",
-            "media/37.905995_-122.554277.jpg",
-            "media/IMG_20190513_180534.jpg"]
+            "media/37.905995_-122.554277.jpg"]
 
     update.message.reply_photo(photo=open(choice(imgs), 'rb'))
 
 
 def reply_withhtml(update,context):
     """What are you looking at?"""
-    update.message.reply_html("<a href='https://amzn.com/B004X2M3N8'>TEST Doctor Who Season 6</a>")
+    looklist = gimmecurrlooks()
+    lk = choice(looklist)
+    update.message.reply_html( str(lk) )
 
  
 def main():

@@ -9,7 +9,9 @@ from vars import heartratedata, sleepdata, timepointdata, stepdata, lookdata
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Utils 
-# from utils import gimmeLongLat, gimmeGeojson, gimmeSeconds, gimmecurseconds, gimmeclosestkv, gimmecurrsteps, gimmeclosestplace
+# from utils import gimmeLongLat, gimmeGeojson, gimmeSeconds, 
+# from utils import gimmecurseconds, gimmeclosestkv, gimmecurrsteps, 
+# from utils import gimmeclosestplace, gimmecurrlooks
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 def gimmeFeelings(myday=int(datetime.today().day)):
@@ -91,6 +93,14 @@ def gimmecurrsteps(mykeys):
         mysteps = entry.steps    
 
     return mykey,mysteps
+
+def gimmecurrlooks():
+    # should constraint this to one user, but alas XXX
+    looklist = []
+    for l in Look.select():
+        mystr = "<a href='%s'>%s</a>" %(l.link,l.look)
+        looklist.append(mystr)
+    return looklist
 
 def gimmeclosestplace():
 #     mykeys = set().union(*(d.keys() for d in alistofdicts))
