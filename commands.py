@@ -14,7 +14,13 @@ logger.setLevel(logging.INFO)
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 def start(update, context):
-    update.message.reply_text('Hi! Use /set <seconds> to set a timer')
+    mymsg = """Hi, I am the Other Townsend! Ask me questions like 
+                "How are you feeling?",
+                "How did you sleep?", 
+                "Where are you?" and 
+                "What are you looking at?" 
+                You may also type /set <seconds> to get regular updates from me."""
+    update.message.reply_text(mymsg)
     
 def pulse(update, context):
     """Gimme your current heart-rate"""

@@ -25,7 +25,9 @@ def gimmeFeelings(myday=int(datetime.today().day)):
         "➖","➖","➖","〰️","➖","➖","➖",
         "➖","➖","➖","➖","〰️","➖","〰️",
         "➖","〰️","➖","➖","➖","➖","➖"]
-    return feels[myday], sleeps[myday]
+    if feels[myday] == "💜": mood = 0
+    if feels[myday] == "💛": mood = 1
+    return feels[myday], sleeps[myday], mood
 
 def gimmeLongLat(stups):
     # ugh, must reverse lat and lng

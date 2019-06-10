@@ -94,18 +94,30 @@ for t in q:
 def reply_withfeeling(update, context):
     """How do you feel?"""
     mypulse = gimmebeats(heartrate_keylist)
-    
-    replies = ["Thanks for asking! I feel great. ",
-    			"I'm doing pretty well today, thanks! ",
-    			"Good, see for yourself. ",
-    			"What could go wrong with stats like these? ",
-    			"Never better! ",
-    			"Good! Why do you ask? ",
-    			"See for yourself! ",
-    			"Great! ",
-    			"Check me out! ",
-    			"Good, thanks. "
-    			""]
+    mood = gimmeFeelings()[2]
+    if mood == 1:
+        replies = ["Thanks for asking! I feel great. ",
+                "I'm doing pretty well today, thanks! ",
+                "Good, see for yourself. ",
+                "What could go wrong with stats like these? ",
+                "Never better! ",
+                "See for yourself! ",
+                "Great! ",
+                "Check me out! ",
+                "Good, thanks. "
+                ""]
+    else:
+        replies = ["Good! Why do you ask? ",
+                "What do you think? ",
+                "Maybe you can tell me? ",
+                "Why do you want to know? ",
+                "Who's asking? ",
+                "ok, thanks. ",
+                "Does it matter? ",
+                "Why would I want to tell you? ",
+                "Been better ",
+                "Does it matter? "
+                ""]
 
     msg = choice(replies) + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
     update.message.reply_text(msg)
@@ -209,7 +221,7 @@ def main():
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # listening for "feelins" and "sleep"
+    # listening for "feelings" and "sleep"
     dp.add_handler(feel_handler)
     dp.add_handler(sleep_handler)
     dp.add_handler(where_handler)

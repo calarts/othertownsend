@@ -1,5 +1,58 @@
 # The Other Townsend
 
+This is part of a project made for the BioDesign Challenge in 2019. 
+
+| request | response |
+|-------  |-------- |
+| Title | The Other Townsend |
+| Names of students | Marley Townsend |
+| Final presentation | [PDF](https://www.dropbox.com/s/cb74f7us4s6a0g7/MarleyTownsend_CalArts_BDC2019_final.pdf?dl=0) |
+| Video files | NA |
+
+
+## Project Description
+
+"The Other Townsend" is a fictitious person--a new sibling--made from personal and biological data collected online from my family. This critical and aesthetic response demonstrates how little major corporations know us, reflects on how damaging this practice might be and offers some ideas about how to protect ourselves in the future.
+
+I manually tracked my family's mood, sleep patterns, physical locations, genetics, and browsing history over seven days to formulate a life for my new sibling. I used this information to make both an image portrait and a data portrait. My new sibling is an example of what companies (Amazon, Verily/Google, Gyroscope, Facebook) think we are. It is a "police sketch" of a person made entirely of stolen data. 
+
+By doing this work manually, I wanted to prove that the subjectivity of human health, mentality, interests, fears, and relationships are uncapturable by data. These corporations are both invading our privacy and failing to capture anything real about us. They are doing this without considering possible consequences.
+
+"The Other Townsend" lives in a computer, with a Telegram chatbot interface for people at https://t.me/OtherTownsendBot.
+
+
+## Links
+- [Telegram Bot](https://t.me/OtherTownsendBot)
+- [Website](https://theothertownsend.com)
+- [Code](https://github.com/calarts/othertownsend)
+- [CalArts blog post](http://blog.calarts.edu/2019/06/05/calartian-competes-in-2019-biodesign-challenge-summit/)
+
+
+
+## High-resolution images
+
+
+![Personal and Biological Data mashup](media/Other_Townsend_mashup.png)
+
+---
+
+![Police Sketch](media/Other_Townsend_policesketch.png)
+
+---
+
+![Electronic habitat](media/Other_Townsend_habitat.jpg)
+
+---
+
+![Poster](media/BDCPoster.png)
+
+---
+
+![Team: Marley Townsend](media/photomarleytownsend.png)
+
+
+
+
 
 ## @theothertownsend
 This code lives on a server at Digital Ocean and serves up files for a Telegram bot, [t.me/OtherTownsendBot](https://t.me/OtherTownsendBot)
