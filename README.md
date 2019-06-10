@@ -6,7 +6,7 @@ This is part of a project made for the BioDesign Challenge in 2019.
 |-------  |-------- |
 | Title | The Other Townsend |
 | Names of students | Marley Townsend |
-| Final presentation | [PDF](https://www.dropbox.com/s/cb74f7us4s6a0g7/MarleyTownsend_CalArts_BDC2019_final.pdf?dl=0) preferred, [Keynote](https://www.dropbox.com/s/9pl7mfdrsnvkbu6/MarleyTownsend_CalArts_BDC2019_final.key?dl=0) REQUIRES INCLUDED FONTS |
+| Final presentation | [PDF](https://www.dropbox.com/s/cb74f7us4s6a0g7/MarleyTownsend_CalArts_BDC2019_final.pdf?dl=0) |
 | Video files | NA |
 
 
