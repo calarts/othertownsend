@@ -221,7 +221,7 @@ def main():
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # listening for "feelins" and "sleep"
+    # listening for "feelings" and "sleep"
     dp.add_handler(feel_handler)
     dp.add_handler(sleep_handler)
     dp.add_handler(where_handler)
