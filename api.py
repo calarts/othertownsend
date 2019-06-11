@@ -3,7 +3,7 @@ from datetime import datetime
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
 from peewee import *
-from flask import Flask
+from flask import Flask, Blueprint
 from flask_restplus import Resource, Api
 
 from vars import Person, Heart, Brain, Place, Step, Look
@@ -25,29 +25,33 @@ for t in q:
 mood = gimmeFeelings()[2]
 
 app = Flask(__name__)
-api = Api(app)
+blueprint = Blueprint('api', __name__, url_prefix='/api')
+api = Api(blueprint)
+app.register_blueprint(blueprint)
 
-@api.route('/api/heartrate')
+assert url_for('api.doc') == '/api/'
+
+@api.route('/heartrate')
 class HeartRate(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mypulse = gimmebeats(heartrate_keylist)
         return {'heartrate': mypulse, 'timestr': timestr}
 
-@api.route('/api/location')
+@api.route('/location')
 class CurrentLocation(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mykey, myplace = gimmeclosestplace()
         return {'myplace': myplace, 'mykey': mykey, 'timestr': timestr}
 
-@api.route('/api/feelings')
+@api.route('/feelings')
 class CurrentFeelings(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'feelings': str(gimmeFeelings()[0]), 'timestr': timestr}
 
-@api.route('/api/sleep')
+@api.route('/sleep')
 class SleepQuality(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
