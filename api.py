@@ -26,7 +26,7 @@ mood = gimmeFeelings()[2]
 
 app = Flask(__name__)
 blueprint = Blueprint('api', __name__, url_prefix='/api')
-api = Api(blueprint, doc='/api')
+api = Api(blueprint)
 app.register_blueprint(blueprint)
 
 
