@@ -12,7 +12,7 @@ then [click here](http://localhost:1313/)
 
 ## send the static files to the server
 
-`rsync -cav /Users/dgoodwin/theothertownsend.com/public/* 134.209.210.119:/var/www/html/`
+`rsync -cav ~/othertownsend/theothertownsend.com/public/* 134.209.210.119:/var/www/html/`
 
 ## Check your work!
 
