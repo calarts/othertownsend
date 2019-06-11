@@ -173,7 +173,7 @@ def main():
     # Where are you?
     class FilterWhere(BaseFilter):
         def filter(self, message):
-            return 'Where are you?' in message.text
+            return 'Where' in message.text
 
     # Where are you?
     class FilterWheresimple(BaseFilter):
