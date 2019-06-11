@@ -34,7 +34,6 @@ from telegram.ext import BaseFilter, Filters
 from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
 
-from vars import pulses, trips, times
 from vars import Person, Heart, Brain, Place, Step, Look
 from vars import heartratedata, sleepdata, timepointdata, stepdata
 from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
@@ -99,7 +98,7 @@ def reply_withfeeling(update, context):
         replies = ["Thanks for asking! I feel great. ",
                 "I'm doing pretty well today, thanks! ",
                 "Good, see for yourself. ",
-                "What could go wrong with stats like these? ",
+                "What could go wrong with numbers like these? ",
                 "Never better! ",
                 "See for yourself! ",
                 "Great! ",
@@ -174,7 +173,7 @@ def main():
     # Where are you?
     class FilterWhere(BaseFilter):
         def filter(self, message):
-            return 'Where are you?' in message.text
+            return 'Where' in message.text
 
     # Where are you?
     class FilterWheresimple(BaseFilter):
