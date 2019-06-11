@@ -22,34 +22,32 @@ q = Step.select(Step.timestamp)
 for t in q:
     step_keylist.append( int(t.timestamp) )
 
-
 mood = gimmeFeelings()[2]
-
 
 app = Flask(__name__)
 api = Api(app)
 
-@api.route('/heartrate')
+@api.route('/api/heartrate')
 class HeartRate(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mypulse = gimmebeats(heartrate_keylist)
         return {'heartrate': mypulse, 'timestr': timestr}
 
-@api.route('/location')
+@api.route('/api/location')
 class CurrentLocation(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mykey, myplace = gimmeclosestplace()
         return {'myplace': myplace, 'mykey': mykey, 'timestr': timestr}
 
-@api.route('/feelings')
+@api.route('/api/feelings')
 class CurrentFeelings(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'feelings': str(gimmeFeelings()[0]), 'timestr': timestr}
 
-@api.route('/sleep')
+@api.route('/api/sleep')
 class SleepQuality(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
