@@ -26,32 +26,32 @@ mood = gimmeFeelings()[2]
 
 app = Flask(__name__)
 # set the base URL with a blueprint
-blueprint = Blueprint('api', __name__, url_prefix='/devapi')
-api = Api(blueprint)
+blueprint = Blueprint('devapi', __name__, url_prefix='/devapi')
+devapi = Api(blueprint)
 app.register_blueprint(blueprint)
 
 
-@api.route('/heartrate')
+@devapi.route('/heartrate')
 class HeartRate(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mypulse = gimmebeats(heartrate_keylist)
         return {'heartrate': mypulse, 'timestr': timestr}
 
-@api.route('/location')
+@devapi.route('/location')
 class CurrentLocation(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mykey, myplace = gimmeclosestplace()
         return {'myplace': myplace, 'mykey': mykey, 'timestr': timestr}
 
-@api.route('/feelings')
+@devapi.route('/feelings')
 class CurrentFeelings(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'feelings': str(gimmeFeelings()[0]), 'timestr': timestr}
 
-@api.route('/sleep')
+@devapi.route('/sleep')
 class SleepQuality(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
