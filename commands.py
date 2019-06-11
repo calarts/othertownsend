@@ -1,4 +1,9 @@
 import logging
+
+from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
+from utils import gimmeclosestplace, gimmebeats
+
+
 # Enable logging
 logging.FileHandler('logs/tickererror.log')
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
