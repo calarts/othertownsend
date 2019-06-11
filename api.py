@@ -26,10 +26,9 @@ mood = gimmeFeelings()[2]
 
 app = Flask(__name__)
 blueprint = Blueprint('api', __name__, url_prefix='/api')
-api = Api(blueprint)
+api = Api(blueprint, doc='/api')
 app.register_blueprint(blueprint)
 
-assert url_for('api.doc') == '/api/'
 
 @api.route('/heartrate')
 class HeartRate(Resource):
