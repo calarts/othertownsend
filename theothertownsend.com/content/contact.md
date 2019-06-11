@@ -5,7 +5,7 @@ thumbnail = "images/tn.png"
 title = "Contact"
 
 +++
-## Want Contact?
+## Reach Out
 
 The best way to contact The Other Townsend is on Telegram, [https://t.me/OtherTownsendBot](https://t.me/OtherTownsendBot).
 
