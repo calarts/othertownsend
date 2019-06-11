@@ -1,0 +1,93 @@
+baseurl = "https://theothertownsend.com"
+title = "The Other Townsend"
+
+theme = "coder-portfolio"
+
+DefaultContentLanguage = "en"
+
+paginate = 20
+
+pygmentsstyle = "b2"
+pygmentscodefences = true
+pygmentscodefencesguesssyntax = true
+pygmentsUseClasses = true
+
+disqusShortname = "yourdiscussshortname"
+
+[params]
+    author = "The Other Townsend"
+    description = "This project addresses the irresponsibility and inaccuracy of major companies in collecting and distributing our personal and biological data, represented by a fake 'person' created out of said data."
+    keywords = "personal"
+    info = "who do they think you are?"
+    avatarurl = "images/avatar.jpg"
+    footercontent = "2019 by Marley Townsend"
+    fixedbarContent = "Want to know more?→"
+    fixedbarContentAfter = "Share→"
+
+    hideCredits = false
+    hideCopyright = false
+
+    snsShare = true
+
+    thumbnail = "images/tn.png"
+
+    # Custom CSS
+    custom_css = []
+
+    # Alignment of Mobile Menu items
+    itemscentered = true
+
+    # RTL support
+    rtl = false
+
+    langseparator = "|"
+
+[[params.social]]
+    name = "Instagram"
+    weight = 1
+    url = "https://instagram.com/theothertownsend/"
+[[params.social]]
+    name = "Twitter"
+    weight = 2
+    url = "https://twitter.com/theothertownsend/"
+[[params.social]]
+    name = "LinkedIn"
+    weight = 3
+    url = "https://www.linkedin.com/in/theothertownsend/"
+
+[languages]
+    [languages.en]
+        languagecode = "en"
+        languagename = "English" # The language name to be displayed in the selector.
+        title = "The Other Townsend"
+
+        # You can configure the theme parameter for each language.
+        [languages.en.params]
+            author = "The Other Townsend"
+            info = "who do they think you are?"
+            description = "This project addresses the irresponsibility and inaccuracy of major companies in collecting and distributing our personal and biological data, represented by a fake 'person' created out of said data."
+            keywords = "data,personal"
+
+        [languages.en.menu] # It is possible to change the menu too.
+
+            [[languages.en.menu.main]]
+                name = "About"
+                weight = 1.0
+                url = "about"
+
+            [[languages.en.menu.main]]
+                name = "Process"
+                weight = 2
+                url = "process"
+
+            [[languages.en.menu.main]]
+                name = "Posts"
+                weight = 3
+                url = "posts"
+
+            [[languages.en.menu.main]]
+                name = "Contact"
+                weight = 5
+                url = "contact"
+
+
