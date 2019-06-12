@@ -4,7 +4,7 @@ import json, csv
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
 
-from vars import Person, Heart, Brain, Place, Step, Look
+from vars import Person, Heart, Brain, Place, Step, Look, Conversation
 from vars import heartratedata, sleepdata, timepointdata, stepdata, lookdata
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -123,7 +123,7 @@ def gimmeclosestplace():
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Build the Tables 
-# from utils import createPersondb, createHeartdb, createPlacedb, createStepdb, CreateLookdb
+# from utils import createPersondb, createHeartdb, createPlacedb, createStepdb, CreateLookdb, createConversationdb
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 def createPersondb(mydb):
@@ -137,8 +137,15 @@ def createPersondb(mydb):
     print("Person table is ready and 'OTHER' was created", created)
     return other
     
-# Create the HEART table.
-# Run this ONLY ONCE IN PRODUCTION!
+# Create the CONVERSATION table.
+# Run this ONLY ONE TIME IN PRODUCTION!
+
+def createConversationdb(mydb):
+    try:
+        print("The Conversation table has", len(Conversation), "entries and it's ready!")
+    except:
+        mydb.create_tables([Conversation])
+        print("Your new Conversation table is ready")
 
 def createHeartdb(mydb,other):
     with open(heartratedata, 'r') as f:
