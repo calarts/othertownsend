@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
@@ -75,9 +76,10 @@ class MyConversations(Resource):
 
         myconvos = []
         for convo in query:
-            myd = {'first_name': Conversation.first_name,'last_name': Conversation.last_name,'message': Conversation.message,'timestamp': Conversation.timestamp}
+            myd = model_to_dict(convo)
+            # myd = {'first_name': Conversation.first_name,'last_name': Conversation.last_name,'message': Conversation.message,'timestamp': Conversation.timestamp}
             myconvos.append(myd)
-            print(myd)
+            # print(myd)
 
         return json.dumps(myconvos)
 
