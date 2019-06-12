@@ -4,6 +4,7 @@ import json
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
 from peewee import *
+from playhouse.shortcuts import model_to_dict
 from flask import Flask, Blueprint
 from flask_restplus import Resource, Api
 
