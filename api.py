@@ -4,7 +4,6 @@ import json
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
 from peewee import *
-from playhouse.shortcuts import model_to_dict
 from flask import Flask, Blueprint
 from flask_restplus import Resource, Api
 
@@ -66,20 +65,19 @@ class MyConversations(Resource):
         query = (Conversation
          .select(Conversation.first_name,Conversation.last_name,Conversation.message)
 
-    # first_name = CharField()
-    # last_name = CharField()
-    # login = CharField()
-    # language_code = CharField()
-    # telegram_id = CharField()
-    # message = TextField()
-    # timestamp = DateTimeField(default=datetime.now)
+        # first_name = CharField()
+        # last_name = CharField()
+        # login = CharField()
+        # language_code = CharField()
+        # telegram_id = CharField()
+        # message = TextField()
+        # timestamp = DateTimeField(default=datetime.now)
 
         myconvos = []
         for convo in query:
-            myd = model_to_dict(convo)
-            # myd = {'first_name': Conversation.first_name,'last_name': Conversation.last_name,'message': Conversation.message,'timestamp': Conversation.timestamp}
+            myd = {'first_name': Conversation.first_name,'last_name': Conversation.last_name,'message': Conversation.message,'timestamp': str(Conversation.timestamp)}
             myconvos.append(myd)
-            # print(myd)
+            print(myd)
 
         return json.dumps(myconvos)
 
