@@ -62,15 +62,13 @@ class SleepQuality(Resource):
 @devapi.route('/conversations')
 class MyConversations(Resource):
     def get(self):
-        query = (Conversation
-         .select(Conversation.first_name,Conversation.last_name,Conversation.message)
-         )
+        query = Conversation.select()
         myconvos = []
         for convo in query:
-            myd = {'first_name': str(Conversation.first_name),
-                    'last_name': str(Conversation.last_name),
-                    'message': str(Conversation.message),
-                    'timestamp': str(Conversation.timestamp)
+            myd = {'first_name': str(convo.first_name),
+                    'last_name': str(convo.last_name),
+                    'message': str(convo.message),
+                    'timestamp': str(convo.timestamp)
                     }
             print(myd)
             myconvos.append(myd)
