@@ -1,5 +1,4 @@
 from datetime import datetime
-import json
 
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
@@ -73,7 +72,7 @@ class MyConversations(Resource):
             print(myd)
             myconvos.append(myd)
 
-        return json.dumps(myconvos)
+        return myconvos
 
 
         # first_name = CharField()
