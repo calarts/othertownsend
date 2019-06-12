@@ -125,8 +125,14 @@ def recordconvo(message):
 
     msg = message.text
     print(message,fn,ln,lg,lc,ti,msg)
-    convo = Conversation.create(actor=other, first_name=fn, last_name=ln, login=lg, language_code=lc, telegram_id=ti,message=msg)
-    convo.save()
+    created = 0
+    convo, created = Conversation.get_or_create(
+        first_name=fn, 
+        last_name=ln, 
+        login=lg, 
+        defaults={'actor': other, 'message': msg, 'language_code': lc, 'telegram_id': ti})
+    if created:
+        convo.save()
 
     # Here's what's in a MESSAGE
     # {
