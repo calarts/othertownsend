@@ -159,12 +159,12 @@ def reply_withphoto(update,context):
 
     update.message.reply_photo(photo=open(choice(imgs), 'rb'))
 
-def recordconvo(update,context):
-    fn = update.message.from_user.first_name
-    ln = update.message.from_user.last_name
-    lg = update.message.from_user.username
-    lc = update.message.from_user.language_code
-    msg = update.message.text
+def recordconvo(message):
+    fn = message.from_user.first_name
+    ln = message.from_user.last_name
+    lg = message.from_user.username
+    lc = message.from_user.language_code
+    msg = message.text
     convo = Converation.create(actor=other, first_name=fn, last_name=ln, login=lg, language_code=lc, message=msg)
     convo.save()
 
@@ -196,7 +196,7 @@ def main():
     # What are you looking at??
     class FilterLook(BaseFilter):
         def filter(self, message):
-            recordconvo()
+            recordconvo(message)
             return 'looking at?' in message.text
 
     filter_look = FilterLook()
@@ -208,13 +208,13 @@ def main():
     # Where are you?
     class FilterWhere(BaseFilter):
         def filter(self, message):
-            recordconvo()
+            recordconvo(message)
             return 'Where' in message.text
 
     # Where are you?
     class FilterWheresimple(BaseFilter):
         def filter(self, message):
-            recordconvo()
+            recordconvo(message)
             return 'where' in message.text
 
     filter_where = FilterWhere()
@@ -228,17 +228,17 @@ def main():
 
     class FilterFeel(BaseFilter):
         def filter(self, message):
-            recordconvo()
+            recordconvo(message)
             return 'you feel?' in message.text
 
     class FilterFeeling(BaseFilter):
         def filter(self, message):
-            recordconvo()
+            recordconvo(message)
             return 'you feeling?' in message.text
 
     class DayBeen(BaseFilter):
         def filter(self, message):
-            recordconvo()
+            recordconvo(message)
             return 'day been?' in message.text
 
     filter_feel = FilterFeel()
@@ -251,6 +251,7 @@ def main():
     # How did you sleep? (sleep)
     class FilterSleep(BaseFilter):
         def filter(self, message):
+            recordconvo(message)
             return 'you sleep?' in message.text
 
     filter_sleep = FilterSleep()
