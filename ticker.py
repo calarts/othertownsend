@@ -165,7 +165,7 @@ def recordconvo(message):
     lg = message.from_user.username
     lc = message.from_user.language_code
     msg = message.text
-    convo = Converation.create(actor=other, first_name=fn, last_name=ln, login=lg, language_code=lc, message=msg)
+    convo = Conversation.create(actor=other, first_name=fn, last_name=ln, login=lg, language_code=lc, message=msg)
     convo.save()
 
 def reply_withhtml(update,context):
