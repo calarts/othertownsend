@@ -161,11 +161,11 @@ def reply_withphoto(update,context):
 
 def recordconvo(message):
     try:
-        fn = message.from_user.first_name
-        ln = message.from_user.last_name
-        lg = message.from_user.username
-        lc = message.from_user.language_code
-        ti = message.from_user.telegram_id
+        fn = message['from']['first_name']
+        ln = message['from']['last_name']
+        lg = message['from']['username']
+        lc = message['from']['language_code']
+        ti = message['from']['id']
     except:
         fn = "anon"
         ln = "ymouse"
@@ -177,6 +177,41 @@ def recordconvo(message):
     print(message,fn,ln,lg,lc,ti,msg)
     convo = Conversation.create(actor=other, first_name=fn, last_name=ln, login=lg, language_code=lc, telegram_id=ti,message=msg)
     convo.save()
+
+    # Here's what's in a MESSAGE
+    # {
+    #     'message_id': 2497,
+    #     'date': 1560323509,
+    #     'chat': {
+    #         'id': 730104154,
+    #         'type': 'private',
+    #         'username': 'dgoodwin',
+    #         'first_name': 'Douglas',
+    #         'last_name': 'Goodwin'
+    #     },
+    #     'text': 'are you recording this?',
+    #     'entities': [],
+    #     'caption_entities': [],
+    #     'photo': [],
+    #     'new_chat_members': [],
+    #     'new_chat_photo': [],
+    #     'delete_chat_photo': False,
+    #     'group_chat_created': False,
+    #     'supergroup_chat_created': False,
+    #     'channel_chat_created': False,
+    #     'from': {
+    #         'id': 730104154,
+    #         'first_name': 'Douglas',
+    #         'is_bot': False,
+    #         'last_name': 'Goodwin',
+    #         'username': 'dgoodwin',
+    #         'language_code': 'en'
+    #     }
+    # }
+
+
+
+
 
 def reply_withhtml(update,context):
     """What are you looking at?"""
@@ -214,17 +249,14 @@ def main():
     look_handler = MessageHandler(filter_look, reply_withhtml)
     
 
-
     # Where are you?
     class FilterWhere(BaseFilter):
         def filter(self, message):
-            recordconvo(message)
             return 'Where' in message.text
 
     # Where are you?
     class FilterWheresimple(BaseFilter):
         def filter(self, message):
-            recordconvo(message)
             return 'where' in message.text
 
     filter_where = FilterWhere()
@@ -238,17 +270,14 @@ def main():
 
     class FilterFeel(BaseFilter):
         def filter(self, message):
-            recordconvo(message)
             return 'you feel?' in message.text
 
     class FilterFeeling(BaseFilter):
         def filter(self, message):
-            recordconvo(message)
             return 'you feeling?' in message.text
 
     class DayBeen(BaseFilter):
         def filter(self, message):
-            recordconvo(message)
             return 'day been?' in message.text
 
     filter_feel = FilterFeel()
@@ -261,7 +290,6 @@ def main():
     # How did you sleep? (sleep)
     class FilterSleep(BaseFilter):
         def filter(self, message):
-            recordconvo(message)
             return 'you sleep?' in message.text
 
     filter_sleep = FilterSleep()
