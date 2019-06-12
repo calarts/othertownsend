@@ -64,8 +64,7 @@ class SleepQuality(Resource):
 class MyConversations(Resource):
     def get(self):
         query = (Conversation
-         .select(Conversation.first_name,Conversation.last_name,Conversation.timestamp,Conversation.message)
-         .order_by(Conversation.timestamp.desc()))
+         .select(Conversation.first_name,Conversation.last_name,Conversation.message)
 
     # first_name = CharField()
     # last_name = CharField()
