@@ -75,7 +75,7 @@ class MyConversations(Resource):
 
         myconvos = []
         for convo in query:
-            myd = {'first_name': Conversation.first_name,'last_name': Conversation.last_name,'message': Conversation.message,,'timestamp': Conversation.timestamp}
+            myd = {'first_name': Conversation.first_name,'last_name': Conversation.last_name,'message': Conversation.message,'timestamp': Conversation.timestamp}
             myconvos.append(myd)
             print(myd)
 
