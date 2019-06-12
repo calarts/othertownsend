@@ -124,19 +124,19 @@ def recordconvo(message):
         ti = "telegramid"
 
     msg = message.text
-    convo, created = Conversation.get_or_create(
+    convo = Conversation.create(
         telegram_id=ti, 
-        defaults={'actor': other, 
-                    'message': msg, 
-                    'language_code': lc, 
-                    'telegram_id': ti,
-                    'first_name':fn, 
-                    'last_name':ln, 
-                    'login':lg
-                    })
-    if created:
-        print(message,fn,ln,lg,lc,ti,msg)
+        actor=other, 
+        message=msg, 
+        language_code=lc, 
+        telegram_id=ti,
+        first_name=fn, 
+        last_name=ln, 
+        login=lg)
+    try:
         convo.save()
+    except:
+        print("couldn't save this Conversation!")
 
     # Here's what's in a MESSAGE
     # {
