@@ -34,13 +34,13 @@ from telegram.ext import BaseFilter, Filters
 from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
 
-from vars import Person, Heart, Brain, Place, Step, Look
+from vars import Person, Heart, Brain, Place, Step, Look, Conversation
 from vars import heartratedata, sleepdata, timepointdata, stepdata
 from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
 from utils import gimmeSeconds, gimmecurseconds, gimmeclosestkv
 from utils import gimmecurrsteps, gimmeclosestplace, gimmebeats
 from utils import createPersondb, createHeartdb, gimmecurrlooks
-from utils import createPlacedb, createStepdb, createLookdb
+from utils import createPlacedb, createStepdb, createLookdb, createConversationdb
 from commands import error, start, pulse, feeling, sleep, loc
 from commands import alarm, set_timer, unset, shutdown, stop
 
@@ -62,9 +62,29 @@ else:
     mydb = SqliteDatabase("other.db")
 
 
+# def add_user_by_telegram(telegram_id: int, first_name: str, last_name: str, login: str, language_code: str):
+#     session.add(User(telegram_id=telegram_id,
+#                      created_at=datetime.datetime.utcnow(),
+#                      first_name=first_name,
+#                      last_name=last_name,
+#                      login=login,
+#                      language_code=language_code
+#                      )
+#                 )
+#     session.commit()
+
+
+# first_name = update.message.from_user.first_name
+# last_name = update.message.from_user.last_name
+# login = update.message.from_user.username
+# language_code = update.message.from_user.language_code
+# add_user_by_telegram(telegram_id, first_name, last_name, login, language_code)
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # create the tables and populate them if necessary
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+createConversationdb(mydb)
 
 other = createPersondb(mydb)
 createHeartdb(mydb,other)
@@ -139,6 +159,14 @@ def reply_withphoto(update,context):
 
     update.message.reply_photo(photo=open(choice(imgs), 'rb'))
 
+def recordconvo(update,context):
+    fn = update.message.from_user.first_name
+    ln = update.message.from_user.last_name
+    lg = update.message.from_user.username
+    lc = update.message.from_user.language_code
+    msg = update.message.text
+    convo = Converation.create(actor=other, first_name=fn, last_name=ln, login=lg, language_code=lc, message=msg)
+    convo.save()
 
 def reply_withhtml(update,context):
     """What are you looking at?"""
@@ -149,19 +177,26 @@ def reply_withhtml(update,context):
  
 def main():
     # """Run bot."""
+
+
+
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
     updater = Updater(TOKEN, use_context=True)
 
+
+
+
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     # Let's listen for specific questions:
-    # ADD LOOKS!
+    # ADD LOGGING to display on the Feather!
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     
     # What are you looking at??
     class FilterLook(BaseFilter):
         def filter(self, message):
+            recordconvo()
             return 'looking at?' in message.text
 
     filter_look = FilterLook()
@@ -173,11 +208,13 @@ def main():
     # Where are you?
     class FilterWhere(BaseFilter):
         def filter(self, message):
+            recordconvo()
             return 'Where' in message.text
 
     # Where are you?
     class FilterWheresimple(BaseFilter):
         def filter(self, message):
+            recordconvo()
             return 'where' in message.text
 
     filter_where = FilterWhere()
@@ -191,14 +228,17 @@ def main():
 
     class FilterFeel(BaseFilter):
         def filter(self, message):
+            recordconvo()
             return 'you feel?' in message.text
 
     class FilterFeeling(BaseFilter):
         def filter(self, message):
+            recordconvo()
             return 'you feeling?' in message.text
 
     class DayBeen(BaseFilter):
         def filter(self, message):
+            recordconvo()
             return 'day been?' in message.text
 
     filter_feel = FilterFeel()

@@ -1,4 +1,4 @@
-from datetime import time
+from datetime import time, datetime
 from peewee import *
 
 from _config import DEBUG
@@ -11,7 +11,7 @@ else:
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # CLASSES 
-# from vars import Person, Heart, Brain, Place, Step, Look
+# from vars import Person, Heart, Brain, Place, Step, Look, Conversation
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 class BaseModel(Model):
@@ -32,7 +32,6 @@ class Heart(BaseModel):
     timestamp = IntegerField()
     bpm = IntegerField()
 
-    
 class Brain(BaseModel):
     actor = ForeignKeyField(Person, backref='shoppingurls')
     timestamp = IntegerField()
@@ -65,6 +64,18 @@ class Step(BaseModel):
     actor = ForeignKeyField(Person, backref='steps')
     steps = IntegerField()
     timestamp = IntegerField()
+
+
+class Conversation(BaseModel):
+    # record conversations with users
+    actor = ForeignKeyField(Person, backref='conversations')
+    first_name = CharField()
+    last_name = CharField()
+    login = CharField()
+    language_code = CharField()
+    telegram_id = CharField()
+    message = TextField()
+    timestamp = DateTimeField(default=datetime.now)
 
 
 class Look(BaseModel):

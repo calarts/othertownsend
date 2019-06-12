@@ -1,0 +1,18 @@
+---
+label: page
+hide_body: false
+fields:
+- type: textarea
+  name: title
+  label: title
+- type: text
+  name: slug
+  label: slug
+- type: file
+  name: thumbnail
+  label: thumbnail
+- type: text
+  name: description
+  label: description
+pages:
+- theothertownsend.com/content/apple.md
