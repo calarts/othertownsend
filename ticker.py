@@ -164,8 +164,10 @@ def recordconvo(message):
     ln = message.from_user.last_name
     lg = message.from_user.username
     lc = message.from_user.language_code
+    ti = message.from_user.telegram_id
     msg = message.text
-    convo = Conversation.create(actor=other, first_name=fn, last_name=ln, login=lg, language_code=lc, message=msg)
+    print(message,fn,ln,lg,lcmti,msg)
+    convo = Conversation.create(actor=other, first_name=fn, last_name=ln, login=lg, language_code=lc, telegram_id=ti,message=msg)
     convo.save()
 
 def reply_withhtml(update,context):
