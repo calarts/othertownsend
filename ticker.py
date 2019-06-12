@@ -110,6 +110,7 @@ for t in q:
 # 
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 def recordconvo(message):
+    print('MESSAGE!',message)
     try:
         fn = message['from']['first_name']
         ln = message['from']['last_name']
@@ -296,8 +297,6 @@ def main():
     # How did you sleep? (sleep)
     class FilterSleep(BaseFilter):
         def filter(self, message):
-            print("FilterSleep")
-            recordconvo(message)
             return 'you sleep?' in message.text
 
     filter_sleep = FilterSleep()
