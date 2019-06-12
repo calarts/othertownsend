@@ -115,7 +115,7 @@ def recordconvo(message):
         ln = message['from']['last_name']
         lg = message['from']['username']
         lc = message['from']['language_code']
-        ti = message['from']['id']
+        ti = message['message_id']
     except:
         fn = "anon"
         ln = "ymouse"
@@ -125,12 +125,16 @@ def recordconvo(message):
 
     msg = message.text
     print(message,fn,ln,lg,lc,ti,msg)
-    created = 0
     convo, created = Conversation.get_or_create(
-        first_name=fn, 
-        last_name=ln, 
-        login=lg, 
-        defaults={'actor': other, 'message': msg, 'language_code': lc, 'telegram_id': ti})
+        telegram_id=ti, 
+        defaults={'actor': other, 
+                    'message': msg, 
+                    'language_code': lc, 
+                    'telegram_id': ti,
+                    'first_name':fn, 
+                    'last_name':ln, 
+                    'login':lg
+                    })
     if created:
         convo.save()
 
