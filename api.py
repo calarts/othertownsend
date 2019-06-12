@@ -67,9 +67,13 @@ class MyConversations(Resource):
          )
         myconvos = []
         for convo in query:
-            myd = {'first_name': Conversation.first_name,'last_name': Conversation.last_name,'message': Conversation.message,'timestamp': str(Conversation.timestamp)}
-            myconvos.append(myd)
+            myd = {'first_name': str(Conversation.first_name),
+                    'last_name': str(Conversation.last_name),
+                    'message': str(Conversation.message),
+                    'timestamp': str(Conversation.timestamp)
+                    }
             print(myd)
+            myconvos.append(myd)
 
         return json.dumps(myconvos)
 
