@@ -64,6 +64,15 @@ class MyConversations(Resource):
     def get(self):
         query = (Conversation
          .select(Conversation.first_name,Conversation.last_name,Conversation.message)
+         )
+        myconvos = []
+        for convo in query:
+            myd = {'first_name': Conversation.first_name,'last_name': Conversation.last_name,'message': Conversation.message,'timestamp': str(Conversation.timestamp)}
+            myconvos.append(myd)
+            print(myd)
+
+        return json.dumps(myconvos)
+
 
         # first_name = CharField()
         # last_name = CharField()
@@ -73,13 +82,6 @@ class MyConversations(Resource):
         # message = TextField()
         # timestamp = DateTimeField(default=datetime.now)
 
-        myconvos = []
-        for convo in query:
-            myd = {'first_name': Conversation.first_name,'last_name': Conversation.last_name,'message': Conversation.message,'timestamp': str(Conversation.timestamp)}
-            myconvos.append(myd)
-            print(myd)
-
-        return json.dumps(myconvos)
 
 
 if __name__ == '__main__':
