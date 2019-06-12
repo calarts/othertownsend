@@ -6,7 +6,7 @@ from peewee import *
 from flask import Flask, Blueprint
 from flask_restplus import Resource, Api
 
-from vars import Person, Heart, Brain, Place, Step, Look
+from vars import Person, Heart, Brain, Place, Step, Look, Conversation
 from utils import gimmeLongLat, gimmeGeojson, gimmeSeconds, gimmeFeelings
 from utils import gimmecurseconds, gimmeclosestkv, gimmecurrsteps
 from utils import gimmeclosestplace, gimmecurrlooks, gimmebeats
@@ -56,6 +56,30 @@ class SleepQuality(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'sleep': str(gimmeFeelings()[1]), 'timestr': timestr}
+
+
+@devapi.route('/conversations')
+class MyConversations(Resource):
+    def get(self):
+        query = (Conversation
+         .select(Conversation.first_name,Conversation.last_name,Conversation.timestamp,Conversation.message)
+         .order_by(Conversation.timestamp.desc()))
+
+    # first_name = CharField()
+    # last_name = CharField()
+    # login = CharField()
+    # language_code = CharField()
+    # telegram_id = CharField()
+    # message = TextField()
+    # timestamp = DateTimeField(default=datetime.now)
+
+        myconvos = []
+        for convo in query:
+            myd = {'first_name': Conversation.first_name,'last_name': Conversation.last_name,'message': Conversation.message,,'timestamp': Conversation.timestamp}
+            myconvos.append(myd)
+            print(myd)
+
+    return json.dumps(myconvos)
 
 
 if __name__ == '__main__':
