@@ -124,7 +124,6 @@ def recordconvo(message):
         ti = "telegramid"
 
     msg = message.text
-    print(message,fn,ln,lg,lc,ti,msg)
     convo, created = Conversation.get_or_create(
         telegram_id=ti, 
         defaults={'actor': other, 
@@ -136,6 +135,7 @@ def recordconvo(message):
                     'login':lg
                     })
     if created:
+        print(message,fn,ln,lg,lc,ti,msg)
         convo.save()
 
     # Here's what's in a MESSAGE
@@ -236,6 +236,8 @@ def main():
     # Post version 12 this will no longer be necessary
     updater = Updater(TOKEN, use_context=True)
 
+    recordconvo(message)
+
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     # Let's listen for specific questions:
     # ADD LOGGING to display on the Feather!
@@ -244,7 +246,7 @@ def main():
     # What are you looking at??
     class FilterLook(BaseFilter):
         def filter(self, message):
-            print(FilterLook)
+            print("FilterLook")
             recordconvo(message)
             return 'looking at?' in message.text
 
@@ -256,14 +258,14 @@ def main():
     # Where are you?
     class FilterWhere(BaseFilter):
         def filter(self, message):
-            print(FilterWhere)
+            print("FilterWhere")
             recordconvo(message)
             return 'Where' in message.text
 
     # Where are you?
     class FilterWheresimple(BaseFilter):
         def filter(self, message):
-            print(FilterWheresimple)
+            print("FilterWheresimple")
             recordconvo(message)
             return 'where' in message.text
 
@@ -278,19 +280,19 @@ def main():
 
     class FilterFeel(BaseFilter):
         def filter(self, message):
-            print(FilterFeel)
+            print("FilterFeel")
             recordconvo(message)
             return 'you feel?' in message.text
 
     class FilterFeeling(BaseFilter):
         def filter(self, message):
-            print(FilterFeeling)
+            print("FilterFeeling")
             recordconvo(message)
             return 'you feeling?' in message.text
 
     class DayBeen(BaseFilter):
         def filter(self, message):
-            print(FilterLook)
+            print("FilterLook")
             recordconvo(message)
             return 'day been?' in message.text
 
@@ -304,7 +306,7 @@ def main():
     # How did you sleep? (sleep)
     class FilterSleep(BaseFilter):
         def filter(self, message):
-            print(FilterSleep)
+            print("FilterSleep")
             recordconvo(message)
             return 'you sleep?' in message.text
 
