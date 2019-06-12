@@ -79,7 +79,7 @@ class MyConversations(Resource):
             myconvos.append(myd)
             print(myd)
 
-    return json.dumps(myconvos)
+        return json.dumps(myconvos)
 
 
 if __name__ == '__main__':
