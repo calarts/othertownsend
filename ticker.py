@@ -129,7 +129,6 @@ def recordconvo(message):
         actor=other, 
         message=msg, 
         language_code=lc, 
-        telegram_id=ti,
         first_name=fn, 
         last_name=ln, 
         login=lg)
