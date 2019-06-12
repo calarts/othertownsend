@@ -172,6 +172,7 @@ def recordconvo(message):
 
 def reply_withfeeling(update, context):
     """How do you feel?"""
+    recordconvo(update.message)
     mypulse = gimmebeats(heartrate_keylist)
     mood = gimmeFeelings()[2]
     if mood == 1:
@@ -203,11 +204,13 @@ def reply_withfeeling(update, context):
 
 def reply_withsleep(update, context):
     """How did you sleep?"""
+    recordconvo(update.message)
     msg = str(gimmeFeelings()[1])
     update.message.reply_text(msg)
 
 def reply_withphoto(update,context):
     """Where are you? Send a photo of a place."""
+    recordconvo(update.message)
     imgs = ["media/37.64961_-122.45323.jpg",
             "media/37.7919_-122.4038.jpg",
             "media/37.914996_-122.533479.jpg"
@@ -223,6 +226,7 @@ def reply_withphoto(update,context):
 
 def reply_withhtml(update,context):
     """What are you looking at?"""
+    recordconvo(update.message)
     looklist = gimmecurrlooks()
     lk = choice(looklist)
     update.message.reply_html( str(lk) )
@@ -236,7 +240,6 @@ def main():
     # Post version 12 this will no longer be necessary
     updater = Updater(TOKEN, use_context=True)
 
-    recordconvo(message)
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     # Let's listen for specific questions:
@@ -246,8 +249,6 @@ def main():
     # What are you looking at??
     class FilterLook(BaseFilter):
         def filter(self, message):
-            print("FilterLook")
-            recordconvo(message)
             return 'looking at?' in message.text
 
     filter_look = FilterLook()
@@ -258,15 +259,11 @@ def main():
     # Where are you?
     class FilterWhere(BaseFilter):
         def filter(self, message):
-            print("FilterWhere")
-            recordconvo(message)
             return 'Where' in message.text
 
     # Where are you?
     class FilterWheresimple(BaseFilter):
         def filter(self, message):
-            print("FilterWheresimple")
-            recordconvo(message)
             return 'where' in message.text
 
     filter_where = FilterWhere()
@@ -280,20 +277,14 @@ def main():
 
     class FilterFeel(BaseFilter):
         def filter(self, message):
-            print("FilterFeel")
-            recordconvo(message)
             return 'you feel?' in message.text
 
     class FilterFeeling(BaseFilter):
         def filter(self, message):
-            print("FilterFeeling")
-            recordconvo(message)
             return 'you feeling?' in message.text
 
     class DayBeen(BaseFilter):
         def filter(self, message):
-            print("FilterLook")
-            recordconvo(message)
             return 'day been?' in message.text
 
     filter_feel = FilterFeel()
