@@ -109,56 +109,6 @@ for t in q:
 # conversations
 # 
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
-
-def reply_withfeeling(update, context):
-    """How do you feel?"""
-    mypulse = gimmebeats(heartrate_keylist)
-    mood = gimmeFeelings()[2]
-    if mood == 1:
-        replies = ["Thanks for asking! I feel great. ",
-                "I'm doing pretty well today, thanks! ",
-                "Good, see for yourself. ",
-                "What could go wrong with numbers like these? ",
-                "Never better! ",
-                "See for yourself! ",
-                "Great! ",
-                "Check me out! ",
-                "Good, thanks. "
-                ""]
-    else:
-        replies = ["Good! Why do you ask? ",
-                "What do you think? ",
-                "Maybe you can tell me? ",
-                "Why do you want to know? ",
-                "Who's asking? ",
-                "ok, thanks. ",
-                "Does it matter? ",
-                "Why would I want to tell you? ",
-                "Been better ",
-                "Does it matter? "
-                ""]
-
-    msg = choice(replies) + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
-    update.message.reply_text(msg)
-
-def reply_withsleep(update, context):
-    """How did you sleep?"""
-    msg = str(gimmeFeelings()[1])
-    update.message.reply_text(msg)
-
-def reply_withphoto(update,context):
-    """Where are you? Send a photo of a place."""
-    imgs = ["media/37.64961_-122.45323.jpg",
-            "media/37.7919_-122.4038.jpg",
-            "media/37.914996_-122.533479.jpg"
-            "media/37.74006_-121.95199.jpg",
-            "media/37.880985_-122.526087.jpg",
-            "media/37.927329_-122.580594.jpg"
-            "media/37.77838_-122.389240.jpg",
-            "media/37.905995_-122.554277.jpg"]
-
-    update.message.reply_photo(photo=open(choice(imgs), 'rb'))
-
 def recordconvo(message):
     try:
         fn = message['from']['first_name']
@@ -210,11 +160,65 @@ def recordconvo(message):
     # }
 
 
+def reply_withfeeling(update, context):
+    """How do you feel?"""
+
+    recordconvo(update.message)
+
+    mypulse = gimmebeats(heartrate_keylist)
+    mood = gimmeFeelings()[2]
+    if mood == 1:
+        replies = ["Thanks for asking! I feel great. ",
+                "I'm doing pretty well today, thanks! ",
+                "Good, see for yourself. ",
+                "What could go wrong with numbers like these? ",
+                "Never better! ",
+                "See for yourself! ",
+                "Great! ",
+                "Check me out! ",
+                "Good, thanks. "
+                ""]
+    else:
+        replies = ["Good! Why do you ask? ",
+                "What do you think? ",
+                "Maybe you can tell me? ",
+                "Why do you want to know? ",
+                "Who's asking? ",
+                "ok, thanks. ",
+                "Does it matter? ",
+                "Why would I want to tell you? ",
+                "Been better ",
+                "Does it matter? "
+                ""]
+
+    msg = choice(replies) + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
+    update.message.reply_text(msg)
+
+def reply_withsleep(update, context):
+    """How did you sleep?"""
+    recordconvo(update.message)
+    msg = str(gimmeFeelings()[1])
+    update.message.reply_text(msg)
+
+def reply_withphoto(update,context):
+    """Where are you? Send a photo of a place."""
+    recordconvo(update.message)
+    imgs = ["media/37.64961_-122.45323.jpg",
+            "media/37.7919_-122.4038.jpg",
+            "media/37.914996_-122.533479.jpg"
+            "media/37.74006_-121.95199.jpg",
+            "media/37.880985_-122.526087.jpg",
+            "media/37.927329_-122.580594.jpg"
+            "media/37.77838_-122.389240.jpg",
+            "media/37.905995_-122.554277.jpg"]
+
+    update.message.reply_photo(photo=open(choice(imgs), 'rb'))
 
 
 
 def reply_withhtml(update,context):
     """What are you looking at?"""
+    recordconvo(update.message)
     looklist = gimmecurrlooks()
     lk = choice(looklist)
     update.message.reply_html( str(lk) )
@@ -241,7 +245,6 @@ def main():
     # What are you looking at??
     class FilterLook(BaseFilter):
         def filter(self, message):
-            recordconvo(message)
             return 'looking at?' in message.text
 
     filter_look = FilterLook()
