@@ -1,6 +1,5 @@
 +++
 description = ""
-draft = true
 slug = "apple"
 thumbnail = ""
 title = "Apple"
