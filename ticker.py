@@ -160,13 +160,21 @@ def reply_withphoto(update,context):
     update.message.reply_photo(photo=open(choice(imgs), 'rb'))
 
 def recordconvo(message):
-    fn = message.from_user.first_name
-    ln = message.from_user.last_name
-    lg = message.from_user.username
-    lc = message.from_user.language_code
-    ti = message.from_user.telegram_id
+    try:
+        fn = message.from_user.first_name
+        ln = message.from_user.last_name
+        lg = message.from_user.username
+        lc = message.from_user.language_code
+        ti = message.from_user.telegram_id
+    except:
+        fn = "anon"
+        ln = "ymouse"
+        lg = "anonymouse"
+        lc = "en"
+        ti = "telegramid"
+
     msg = message.text
-    print(message,fn,ln,lg,lcmti,msg)
+    print(message,fn,ln,lg,lc,ti,msg)
     convo = Conversation.create(actor=other, first_name=fn, last_name=ln, login=lg, language_code=lc, telegram_id=ti,message=msg)
     convo.save()
 
