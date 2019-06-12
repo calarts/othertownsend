@@ -14,7 +14,7 @@ sections:
   label: Posts
   create: all
   match: "**/*"
-upload_dir: theothertownsend.com/static/uploads
+upload_dir: theothertownsend.com/static/media
 public_path: "/media"
 front_matter_path: ''
 use_front_matter_path: false
