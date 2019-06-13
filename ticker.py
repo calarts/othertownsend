@@ -34,13 +34,13 @@ from telegram.ext import BaseFilter, Filters
 from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
 
-from vars import Person, Heart, Brain, Place, Step, Look
+from models import Person, Heart, Brain, Place, Step, Look, Conversation
 from vars import heartratedata, sleepdata, timepointdata, stepdata
 from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
 from utils import gimmeSeconds, gimmecurseconds, gimmeclosestkv
 from utils import gimmecurrsteps, gimmeclosestplace, gimmebeats
 from utils import createPersondb, createHeartdb, gimmecurrlooks
-from utils import createPlacedb, createStepdb, createLookdb
+from utils import createPlacedb, createStepdb, createLookdb, createConversationdb
 from commands import error, start, pulse, feeling, sleep, loc
 from commands import alarm, set_timer, unset, shutdown, stop
 
@@ -62,9 +62,29 @@ else:
     mydb = SqliteDatabase("other.db")
 
 
+# def add_user_by_telegram(telegram_id: int, first_name: str, last_name: str, login: str, language_code: str):
+#     session.add(User(telegram_id=telegram_id,
+#                      created_at=datetime.datetime.utcnow(),
+#                      first_name=first_name,
+#                      last_name=last_name,
+#                      login=login,
+#                      language_code=language_code
+#                      )
+#                 )
+#     session.commit()
+
+
+# first_name = update.message.from_user.first_name
+# last_name = update.message.from_user.last_name
+# login = update.message.from_user.username
+# language_code = update.message.from_user.language_code
+# add_user_by_telegram(telegram_id, first_name, last_name, login, language_code)
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # create the tables and populate them if necessary
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+createConversationdb(mydb)
 
 other = createPersondb(mydb)
 createHeartdb(mydb,other)
@@ -90,8 +110,111 @@ for t in q:
 # 
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
+# Here's what's in a MESSAGE
+# {
+#     'message_id': 2497,
+#     'date': 1560323509,
+#     'chat': {
+#         'id': 730104154,
+#         'type': 'private',
+#         'username': 'dgoodwin',
+#         'first_name': 'Douglas',
+#         'last_name': 'Goodwin'
+#     },
+#     'text': 'are you recording this?',
+#     'entities': [],
+#     'caption_entities': [],
+#     'photo': [],
+#     'new_chat_members': [],
+#     'new_chat_photo': [],
+#     'delete_chat_photo': False,
+#     'group_chat_created': False,
+#     'supergroup_chat_created': False,
+#     'channel_chat_created': False,
+#     'from': {
+#         'id': 730104154,
+#         'first_name': 'Douglas',
+#         'is_bot': False,
+#         'last_name': 'Goodwin',
+#         'username': 'dgoodwin',
+#         'language_code': 'en'
+#     }
+# }
+
+# {
+# 	'message_id': 2570,
+# 	'date': 1560385165,
+# 	'chat': {
+# 		'id': 730104154,
+# 		'type': 'private',
+# 		'username': 'dgoodwin',
+# 		'first_name': 'Douglas',
+# 		'last_name': 'Goodwin'
+# 	},
+# 	'text': 'how are you feeling?',
+# 	'entities': [],
+# 	'caption_entities': [],
+# 	'photo': [],
+# 	'new_chat_members': [],
+# 	'new_chat_photo': [],
+# 	'delete_chat_photo': False,
+# 	'group_chat_created': False,
+# 	'supergroup_chat_created': False,
+# 	'channel_chat_created': False,
+# 	'from': {
+# 		'id': 730104154,
+# 		'first_name': 'Douglas',
+# 		'is_bot': False,
+# 		'last_name': 'Goodwin',
+# 		'username': 'dgoodwin',
+# 		'language_code': 'en'
+# 	}
+# }
+
+
+
+def recordconvo(message):
+	"""Record contact from humans and others"""
+	fn = message.from_user.first_name
+	ln = message.from_user.last_name
+	lg = message.from_user.username
+	lc = message.from_user.language_code
+	ti = message.from_user.id
+	cn = message.from_user.name
+	msg = message.text
+	
+	try:
+		chatee = Person.get(Person.telegram_id == ti)
+	except Person.DoesNotExist:
+		chatee = Person.create(
+			name=lg,
+			login=lg,
+			chat_name=cn,
+			telegram_id=ti,
+			created_at=datetime.now(),
+			first_name=fn,
+			last_name=ln,
+			language_code=lc 
+			)
+		try:
+			chatee.save()
+		except:
+			print("couldn't save this Chatee!",fn,ln,ti)
+
+	convo = Conversation.create(
+		actor=chatee, 
+		message=msg
+		)
+	try:
+		convo.save()
+	except:
+		print("couldn't save this Conversation!",chatee,msg)
+
+
+
 def reply_withfeeling(update, context):
     """How do you feel?"""
+    recordconvo(update.message)
     mypulse = gimmebeats(heartrate_keylist)
     mood = gimmeFeelings()[2]
     if mood == 1:
@@ -123,11 +246,13 @@ def reply_withfeeling(update, context):
 
 def reply_withsleep(update, context):
     """How did you sleep?"""
+    recordconvo(update.message)
     msg = str(gimmeFeelings()[1])
     update.message.reply_text(msg)
 
 def reply_withphoto(update,context):
     """Where are you? Send a photo of a place."""
+    recordconvo(update.message)
     imgs = ["media/37.64961_-122.45323.jpg",
             "media/37.7919_-122.4038.jpg",
             "media/37.914996_-122.533479.jpg"
@@ -140,8 +265,10 @@ def reply_withphoto(update,context):
     update.message.reply_photo(photo=open(choice(imgs), 'rb'))
 
 
+
 def reply_withhtml(update,context):
     """What are you looking at?"""
+    recordconvo(update.message)
     looklist = gimmecurrlooks()
     lk = choice(looklist)
     update.message.reply_html( str(lk) )
@@ -149,14 +276,16 @@ def reply_withhtml(update,context):
  
 def main():
     # """Run bot."""
+
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
     updater = Updater(TOKEN, use_context=True)
 
+
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     # Let's listen for specific questions:
-    # ADD LOOKS!
+    # ADD LOGGING to display on the Feather!
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     
     # What are you looking at??
@@ -168,7 +297,6 @@ def main():
     
     look_handler = MessageHandler(filter_look, reply_withhtml)
     
-
 
     # Where are you?
     class FilterWhere(BaseFilter):
