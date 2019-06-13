@@ -92,7 +92,11 @@ class MyConversations(Resource):
 
 	def get(self):
 		myconvos = []
-		for convo in Conversation.select(Conversation.message,Conversation.timestamp).join(Person):
+		query = (Conversation
+				.select()
+				.join(Person, on=(Conversation.actor == Person.id)))
+
+		for convo in query:
 			myd = {'first_name': str(convo.actor.first_name),
 					'last_name': str(convo.actor.last_name),
 					'message': str(convo.message),
