@@ -240,7 +240,7 @@ def reply_withfeeling(update, context):
                 "Been better ",
                 "Does it matter? "
                 ""]
-    personalreply = "Hey user " + update.message.from_user.id + "!\n"
+    personalreply = "Hey user " + str(update.message.from_user.id) + "!\n"
     msg = personalreply + choice(replies) + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
     update.message.reply_text(msg)
 
