@@ -34,7 +34,7 @@ from telegram.ext import BaseFilter, Filters
 from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
 
-from vars import Person, Heart, Brain, Place, Step, Look, Conversation
+from models import Person, Heart, Brain, Place, Step, Look, Conversation
 from vars import heartratedata, sleepdata, timepointdata, stepdata
 from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
 from utils import gimmeSeconds, gimmecurseconds, gimmeclosestkv
@@ -109,65 +109,107 @@ for t in q:
 # conversations
 # 
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+# Here's what's in a MESSAGE
+# {
+#     'message_id': 2497,
+#     'date': 1560323509,
+#     'chat': {
+#         'id': 730104154,
+#         'type': 'private',
+#         'username': 'dgoodwin',
+#         'first_name': 'Douglas',
+#         'last_name': 'Goodwin'
+#     },
+#     'text': 'are you recording this?',
+#     'entities': [],
+#     'caption_entities': [],
+#     'photo': [],
+#     'new_chat_members': [],
+#     'new_chat_photo': [],
+#     'delete_chat_photo': False,
+#     'group_chat_created': False,
+#     'supergroup_chat_created': False,
+#     'channel_chat_created': False,
+#     'from': {
+#         'id': 730104154,
+#         'first_name': 'Douglas',
+#         'is_bot': False,
+#         'last_name': 'Goodwin',
+#         'username': 'dgoodwin',
+#         'language_code': 'en'
+#     }
+# }
+
+# {
+# 	'message_id': 2570,
+# 	'date': 1560385165,
+# 	'chat': {
+# 		'id': 730104154,
+# 		'type': 'private',
+# 		'username': 'dgoodwin',
+# 		'first_name': 'Douglas',
+# 		'last_name': 'Goodwin'
+# 	},
+# 	'text': 'how are you feeling?',
+# 	'entities': [],
+# 	'caption_entities': [],
+# 	'photo': [],
+# 	'new_chat_members': [],
+# 	'new_chat_photo': [],
+# 	'delete_chat_photo': False,
+# 	'group_chat_created': False,
+# 	'supergroup_chat_created': False,
+# 	'channel_chat_created': False,
+# 	'from': {
+# 		'id': 730104154,
+# 		'first_name': 'Douglas',
+# 		'is_bot': False,
+# 		'last_name': 'Goodwin',
+# 		'username': 'dgoodwin',
+# 		'language_code': 'en'
+# 	}
+# }
+
+
+
 def recordconvo(message):
-    print('MESSAGE!',message)
-    try:
-        fn = message['from']['first_name']
-        ln = message['from']['last_name']
-        lg = message['from']['username']
-        lc = message['from']['language_code']
-        ti = message['message_id']
-    except:
-        fn = "anon"
-        ln = "ymouse"
-        lg = "anonymouse"
-        lc = "en"
-        ti = "telegramid"
+	"""Record contact from humans and others"""
+	fn = message.from_user.first_name
+	ln = message.from_user.last_name
+	lg = message.from_user.username
+	lc = message.from_user.language_code
+	ti = message.from_user.id
+	cn = message.from_user.name
+	msg = message.text
+	
+	try:
+		chatee = Person.get(Person.telegram_id == ti)
+	except Person.DoesNotExist:
+		chatee = Person.create(
+			name=lg,
+			login=lg,
+			chat_name=cn,
+			telegram_id=ti,
+			created_at=datetime.now(),
+			first_name=fn,
+			last_name=ln,
+			language_code=lc 
+			)
+		try:
+			chatee.save()
+		except:
+			print("couldn't save this Chatee!",fn,ln,ti)
 
-    msg = message.text
-    convo = Conversation.create(
-        telegram_id=ti, 
-        actor=other, 
-        message=msg, 
-        language_code=lc, 
-        first_name=fn, 
-        last_name=ln, 
-        login=lg)
-    try:
-        convo.save()
-    except:
-        print("couldn't save this Conversation!")
+	convo = Conversation.create(
+		actor=chatee, 
+		message=msg
+		)
+	try:
+		convo.save()
+	except:
+		print("couldn't save this Conversation!",chatee,msg)
 
-    # Here's what's in a MESSAGE
-    # {
-    #     'message_id': 2497,
-    #     'date': 1560323509,
-    #     'chat': {
-    #         'id': 730104154,
-    #         'type': 'private',
-    #         'username': 'dgoodwin',
-    #         'first_name': 'Douglas',
-    #         'last_name': 'Goodwin'
-    #     },
-    #     'text': 'are you recording this?',
-    #     'entities': [],
-    #     'caption_entities': [],
-    #     'photo': [],
-    #     'new_chat_members': [],
-    #     'new_chat_photo': [],
-    #     'delete_chat_photo': False,
-    #     'group_chat_created': False,
-    #     'supergroup_chat_created': False,
-    #     'channel_chat_created': False,
-    #     'from': {
-    #         'id': 730104154,
-    #         'first_name': 'Douglas',
-    #         'is_bot': False,
-    #         'last_name': 'Goodwin',
-    #         'username': 'dgoodwin',
-    #         'language_code': 'en'
-    #     }
-    # }
 
 
 def reply_withfeeling(update, context):
