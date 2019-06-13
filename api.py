@@ -26,39 +26,39 @@ mood = gimmeFeelings()[2]
 
 app = Flask(__name__)
 # set the base URL with a blueprint
-blueprint = Blueprint('devapi', __name__, url_prefix='/devapi')
-devapi = Api(blueprint)
+blueprint = Blueprint('api', __name__, url_prefix='/api')
+api = Api(blueprint)
 app.register_blueprint(blueprint)
 
 
-@devapi.route('/heartrate')
+@api.route('/heartrate')
 class HeartRate(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mypulse = gimmebeats(heartrate_keylist)
         return {'heartrate': mypulse, 'timestr': timestr}
 
-@devapi.route('/location')
+@api.route('/location')
 class CurrentLocation(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mykey, myplace = gimmeclosestplace()
         return {'myplace': myplace, 'mykey': mykey, 'timestr': timestr}
 
-@devapi.route('/feelings')
+@api.route('/feelings')
 class CurrentFeelings(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'feelings': str(gimmeFeelings()[0]), 'timestr': timestr}
 
-@devapi.route('/sleep')
+@api.route('/sleep')
 class SleepQuality(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'sleep': str(gimmeFeelings()[1]), 'timestr': timestr}
 
 
-@devapi.route('/conversations')
+@api.route('/conversations')
 class MyConversations(Resource):
 	"""Get all conversations"""
 	# example
