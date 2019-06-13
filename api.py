@@ -6,7 +6,7 @@ from peewee import *
 from flask import Flask, Blueprint
 from flask_restplus import Resource, Api
 
-from vars import Person, Heart, Brain, Place, Step, Look, Conversation
+from models import Person, Heart, Brain, Place, Step, Look, Conversation
 from utils import gimmeLongLat, gimmeGeojson, gimmeSeconds, gimmeFeelings
 from utils import gimmecurseconds, gimmeclosestkv, gimmecurrsteps
 from utils import gimmeclosestplace, gimmecurrlooks, gimmebeats
@@ -60,12 +60,41 @@ class SleepQuality(Resource):
 
 @devapi.route('/conversations')
 class MyConversations(Resource):
+	"""Get all conversations"""
+	# example
+	# for tweet in Tweet.select(Tweet.content, User.username).join(User):
+	# ...     print(tweet.user.username, '->', tweet.content)
+
+	# class Person(BaseModel):
+	#     name = CharField()
+	#     telegram_id = BigIntegerField()
+	#     created_at = DateTimeField()
+	#     chat_name = CharField()
+	#     first_name = CharField()
+	#     last_name = CharField()
+	#     login = CharField()
+	#     language_code = CharField()
+	# 
+	#     def get_mytimepoints(self):
+	#         return self.timepoints
+	# 
+	#     def get_myheartbeats(self):
+	#         return self.heartbeats
+	# 
+	#     def get_myconversations(self):
+	#         return self.conversations
+	# 
+	# class Conversation(BaseModel):
+	#     # record conversations with users
+	#     actor = ForeignKeyField(Person, backref='conversations')
+	#     message = TextField()
+	#     timestamp = DateTimeField(default=datetime.now)
+
     def get(self):
-        query = Conversation.select()
         myconvos = []
-        for convo in query:
-            myd = {'first_name': str(convo.first_name),
-                    'last_name': str(convo.last_name),
+        for convo in Conversation.select(Conversation.message,Conversation.timestamp).join(Person):
+            myd = {'first_name': str(convo.actor.first_name),
+                    'last_name': str(convo.actor.last_name),
                     'message': str(convo.message),
                     'timestamp': str(convo.timestamp)
                     }
@@ -73,16 +102,6 @@ class MyConversations(Resource):
             myconvos.append(myd)
 
         return myconvos
-
-
-        # first_name = CharField()
-        # last_name = CharField()
-        # login = CharField()
-        # language_code = CharField()
-        # telegram_id = CharField()
-        # message = TextField()
-        # timestamp = DateTimeField(default=datetime.now)
-
 
 
 if __name__ == '__main__':
