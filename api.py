@@ -90,18 +90,18 @@ class MyConversations(Resource):
 	#     message = TextField()
 	#     timestamp = DateTimeField(default=datetime.now)
 
-    def get(self):
-        myconvos = []
-        for convo in Conversation.select(Conversation.message,Conversation.timestamp).join(Person):
-            myd = {'first_name': str(convo.actor.first_name),
-                    'last_name': str(convo.actor.last_name),
-                    'message': str(convo.message),
-                    'timestamp': str(convo.timestamp)
-                    }
-            print(myd)
-            myconvos.append(myd)
+	def get(self):
+		myconvos = []
+		for convo in Conversation.select(Conversation.message,Conversation.timestamp).join(Person):
+			myd = {'first_name': str(convo.actor.first_name),
+					'last_name': str(convo.actor.last_name),
+					'message': str(convo.message),
+					'timestamp': str(convo.timestamp)
+					}
+			print(myd)
+			myconvos.append(myd)
 
-        return myconvos
+		return myconvos
 
 
 if __name__ == '__main__':
