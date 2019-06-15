@@ -173,7 +173,11 @@ def reply_withgreeting(update, context):
                 "🖐️",
                 "k",
                 "howdy"]
-    msg = choice(replies) +" "+ str(update.message.from_user.name)
+    if update.message.from_user.first_name:
+        personalreply = str(update.message.from_user.first_name)
+    else:
+        personalreply = str(update.message.from_user.name)
+    msg = choice(replies) +" "+ personalreply
     update.message.reply_text(msg)
 
 
@@ -204,11 +208,11 @@ def reply_withfeeling(update, context):
                 "Been better ",
                 "Does it matter? "
                 ""]
-    if update.message.from_user.first_name:
-        personalreply = "Hey " + str(update.message.from_user.first_name) + "!\n"
-    else:
-        personalreply = "Hi " + str(update.message.from_user.name) + ".\n"
-    msg = personalreply + choice(replies) + str(other.get_mymood()) + str(mypulse) + " BPM"
+    # if update.message.from_user.first_name:
+    #     personalreply = "Hey " + str(update.message.from_user.first_name) + "!\n"
+    # else:
+    #     personalreply = "Hi " + str(update.message.from_user.name) + ".\n"
+    msg = choice(replies) + str(other.get_mymood()) + str(mypulse) + " BPM"
     update.message.reply_text(msg)
 
 def reply_withsleep(update, context):
