@@ -1,4 +1,6 @@
+from random import choice
 from datetime import time, datetime
+
 from peewee import *
 
 from _config import DEBUG
@@ -7,6 +9,14 @@ if DEBUG:
     mydb = SqliteDatabase(':memory:')
 else:
     mydb = SqliteDatabase("other.db")
+
+
+
+def gimmecurseconds():
+    now = datetime.now()     # should be local time!
+    secs_since_midnight = (now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds()
+    return int(secs_since_midnight)
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # MODELS
@@ -37,6 +47,81 @@ class Person(BaseModel):
     def get_myconversations(self):
         return self.conversations
 
+    def get_personalreply(self,update,themeat):
+        pleasentries = ['Hi',
+                            'yawn',
+                            'are you still here?'
+                            'I was just getting back to it.',
+                            'could you ask me in a few minutes?',
+                            "I'll sleep when I'm dead."]
+        personalreply = "Hi again " + str(update.message.from_user.name) + "!\n"
+        personalreply = personalreply + choice(pleasentries)
+        personalreply = personalreply + themeat
+        return personalreply
+
+    def get_mymood(self,myday=int(datetime.today().day)):
+        feels = ["💛","💜","💜","💛","💜","💜","💛",
+            "💛","💛","💛","💛","💛","💜","💜",
+            "💛","💜","💜","💛","💛","💜","💛",
+            "💜","💛","💛","💜","💜","💛","💛",
+            "💜","💛","💛","💛","💜","💛","💜"]
+        self.feels = feels[myday]
+        if self.feels == "💜": self.mood = 0
+        if self.feels == "💛": self.mood = 1
+        return self.feels, self.mood
+
+    def get_mysleep(self,myday=int(datetime.today().day)):
+        sleeps = ["➖","〰️","➖","➖","➖","➖","〰️",
+            "➖","〰️","➖","〰️","➖","➖","➖",
+            "➖","➖","➖","〰️","➖","➖","➖",
+            "➖","➖","➖","➖","〰️","➖","〰️",
+            "➖","〰️","➖","➖","➖","➖","➖"]
+        self.sleep = sleeps[myday]
+        return self.sleep
+
+    def gimmebeats(self,mykeys):
+        # mykeys = set().union(*(d.keys() for d in alistofdicts))
+        mykey = min(mykeys, key=lambda x:abs(x - gimmecurseconds() ))
+        q = Heart.select().where(Heart.timestamp == int(mykey))
+        for entry in q:
+            self.mybpm = entry.bpm
+
+        return self.mybpm
+
+    def gimmecurrsteps(self,mykeys):
+        mykey = min(mykeys, key=lambda x:abs(x - gimmecurseconds() ))
+        q = Step.select().where(Step.timestamp == int(mykey))
+        for entry in q:
+            self.mysteps = entry.steps    
+
+        return mykey,self.mysteps
+
+    def gimmecurrlooks(self):
+        looklist = []
+        for l in Look.select():
+            mystr = "<a href='%s'>%s</a>" %(l.link,l.look)
+            looklist.append(mystr)
+        self.looklist = looklist
+        return self.looklist
+
+    def gimmeclosestplace(self):
+    #     mykeys = set().union(*(d.keys() for d in alistofdicts))
+        # get the keys by querying the places
+        mykeys = []
+        q = Place.select()
+        for entry in q:
+            mykeys.append(int(entry.timestamp))
+
+        mykey = min(mykeys, key=lambda x:abs(x - gimmecurseconds() ))
+
+        q = Place.select().where(Place.timestamp == int(mykey))
+        for entry in q:
+            self.myplce = entry.point
+
+        return mykey,myplce
+
+
+
 class Conversation(BaseModel):
     # record conversations with users
     actor = ForeignKeyField(Person, backref='conversations')
@@ -49,22 +134,6 @@ class Heart(BaseModel):
     timestamp = IntegerField()
     bpm = IntegerField()
 
-class Brain(BaseModel):
-    actor = ForeignKeyField(Person, backref='shoppingurls')
-    timestamp = IntegerField()
-    urls = []
-    
-# class Eyes(BaseModel):
-#     actor = ForeignKeyField(Person, backref='streetviews')
-#     timestamp = IntegerField()
-# 
-#     streetviews = []
-#     
-# class Legs(BaseModel):
-#     actor = ForeignKeyField(Person, backref='steps')
-#     timestamp = IntegerField()
-# 
-#     steps = []
     
 class Place(BaseModel):
     actor = ForeignKeyField(Person, backref='timepoints')

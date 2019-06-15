@@ -34,12 +34,11 @@ from telegram.ext import BaseFilter, Filters
 from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
 
-from models import Person, Heart, Brain, Place, Step, Look, Conversation
+from models import Person, Heart, Step, Conversation
 from vars import heartratedata, sleepdata, timepointdata, stepdata
-from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
-from utils import gimmeSeconds, gimmecurseconds, gimmeclosestkv
-from utils import gimmecurrsteps, gimmeclosestplace, gimmebeats
-from utils import createPersondb, createHeartdb, gimmecurrlooks
+# from utils import gimmeLongLat, gimmeGeojson
+# from utils import gimmeSeconds, gimmecurseconds
+from utils import createPersondb, createHeartdb
 from utils import createPlacedb, createStepdb, createLookdb, createConversationdb
 from commands import error, start, pulse, feeling, sleep, loc
 from commands import alarm, set_timer, unset, shutdown, stop
@@ -61,24 +60,6 @@ if DEBUG:
 else:
     mydb = SqliteDatabase("other.db")
 
-
-# def add_user_by_telegram(telegram_id: int, first_name: str, last_name: str, login: str, language_code: str):
-#     session.add(User(telegram_id=telegram_id,
-#                      created_at=datetime.datetime.utcnow(),
-#                      first_name=first_name,
-#                      last_name=last_name,
-#                      login=login,
-#                      language_code=language_code
-#                      )
-#                 )
-#     session.commit()
-
-
-# first_name = update.message.from_user.first_name
-# last_name = update.message.from_user.last_name
-# login = update.message.from_user.username
-# language_code = update.message.from_user.language_code
-# add_user_by_telegram(telegram_id, first_name, last_name, login, language_code)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # create the tables and populate them if necessary
@@ -172,52 +153,35 @@ for t in q:
 # }
 
 
-
-def recordconvo(message):
-	"""Record contact from humans and others"""
-	fn = message.from_user.first_name
-	ln = message.from_user.last_name
-	lg = message.from_user.username
-	lc = message.from_user.language_code
-	ti = message.from_user.id
-	cn = message.from_user.name
-	msg = message.text
-	
-	try:
-		chatee = Person.get(Person.telegram_id == ti)
-	except Person.DoesNotExist:
-		chatee = Person.create(
-			name=lg,
-			login=lg,
-			chat_name=cn,
-			telegram_id=ti,
-			created_at=datetime.now(),
-			first_name=fn,
-			last_name=ln,
-			language_code=lc 
-			)
-		try:
-			chatee.save()
-		except:
-			print("couldn't save this Chatee!",fn,ln,ti)
-
-	convo = Conversation.create(
-		actor=chatee, 
-		message=msg
-		)
-	try:
-		convo.save()
-	except:
-		print("couldn't save this Conversation!",chatee,msg)
-
+def reply_withgreeting(update, context):
+    """reply with simple hallos"""
+    feelings = other.get_mymood()   # this sets mood
+    if other.mood == 1:
+        replies = ["hi",
+                "hey,",
+                "what's up",
+                "yo",
+                "how you been",
+                "👋",
+                "🤝",
+                "🖐️",
+                "🖖"]
+    else:
+        replies = ["👋",
+                "👾",
+                "yo",
+                "🖐️",
+                "k",
+                "howdy"]
+    msg = choice(replies) +" "+ str(update.message.from_user.name)
+    update.message.reply_text(msg)
 
 
 def reply_withfeeling(update, context):
     """How do you feel?"""
-    recordconvo(update.message)
-    mypulse = gimmebeats(heartrate_keylist)
-    mood = gimmeFeelings()[2]
-    if mood == 1:
+    mypulse = other.gimmebeats(heartrate_keylist)
+    feelings = other.get_mymood()   # this sets mood
+    if other.mood == 1:
         replies = ["Thanks for asking! I feel great. ",
                 "I'm doing pretty well today, thanks! ",
                 "Good, see for yourself. ",
@@ -225,7 +189,7 @@ def reply_withfeeling(update, context):
                 "Never better! ",
                 "See for yourself! ",
                 "Great! ",
-                "Check me out! ",
+                "Check me owwt! ",
                 "Good, thanks. "
                 ""]
     else:
@@ -240,38 +204,75 @@ def reply_withfeeling(update, context):
                 "Been better ",
                 "Does it matter? "
                 ""]
-    personalreply = "Hey user " + str(update.message.from_user.id) + "!\n"
-    msg = personalreply + choice(replies) + str(gimmeFeelings()[0]) + str(mypulse) + " BPM"
+    if update.message.from_user.first_name:
+        personalreply = "Hey " + str(update.message.from_user.first_name) + "!\n"
+    else:
+        personalreply = "Hi " + str(update.message.from_user.name) + ".\n"
+    msg = personalreply + choice(replies) + str(other.get_mymood()) + str(mypulse) + " BPM"
     update.message.reply_text(msg)
 
 def reply_withsleep(update, context):
     """How did you sleep?"""
-    recordconvo(update.message)
-    msg = str(gimmeFeelings()[1])
-    update.message.reply_text(msg)
+    reply = other.get_personalreply(update,themeat=str(other.get_mysleep()))
+    update.message.reply_text(reply)
 
 def reply_withphoto(update,context):
     """Where are you? Send a photo of a place."""
-    recordconvo(update.message)
+    reply = other.get_personalreply(update,themeat=str(other.get_mymood()))
     imgs = ["media/37.64961_-122.45323.jpg",
             "media/37.7919_-122.4038.jpg",
             "media/37.914996_-122.533479.jpg"
             "media/37.74006_-121.95199.jpg",
             "media/37.880985_-122.526087.jpg",
-            "media/37.927329_-122.580594.jpg"
+            "media/37.927329_-122.580594.jpg",
             "media/37.77838_-122.389240.jpg",
             "media/37.905995_-122.554277.jpg"]
 
     update.message.reply_photo(photo=open(choice(imgs), 'rb'))
 
 
-
 def reply_withhtml(update,context):
     """What are you looking at?"""
-    recordconvo(update.message)
-    looklist = gimmecurrlooks()
+    looklist = other.gimmecurrlooks()
     lk = choice(looklist)
     update.message.reply_html( str(lk) )
+
+def recordconvo(message):
+    """Record contact from humans and others"""
+    fn = message.from_user.first_name
+    ln = message.from_user.last_name
+    lg = message.from_user.username
+    lc = message.from_user.language_code
+    ti = message.from_user.id
+    cn = message.from_user.name
+    msg = message.text
+    
+    try:
+        chatee = Person.get(Person.telegram_id == ti)
+    except Person.DoesNotExist:
+        chatee = Person.create(
+            name=lg,
+            login=lg,
+            chat_name=cn,
+            telegram_id=ti,
+            created_at=datetime.now(),
+            first_name=fn,
+            last_name=ln,
+            language_code=lc 
+            )
+        try:
+            chatee.save()
+        except:
+            print("couldn't save this Chatee!",fn,ln,ti)
+
+    convo = Conversation.create(
+        actor=chatee, 
+        message=msg
+        )
+    try:
+        convo.save()
+    except:
+        print("couldn't save this Conversation!",chatee,msg)
 
  
 def main():
@@ -287,31 +288,40 @@ def main():
     # Let's listen for specific questions:
     # ADD LOGGING to display on the Feather!
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-    
+
+    # simple greetings
+    class FilterGreetings(BaseFilter):
+        def filter(self, message):
+            amitrue = ('hi' in message.text or 'hey' in message.text or 'hello' in message.text)
+            return amitrue
+
+    filter_greetings = FilterGreetings()
+    greetings_handler = MessageHandler(filter_greetings, reply_withgreeting)
+
+
     # What are you looking at??
     class FilterLook(BaseFilter):
         def filter(self, message):
-            return 'looking at?' in message.text
+            amitrue = ('looking' in message.text or 'look' in message.text)
+            # this little hack will record all text messages
+            if amitrue:
+                recordconvo(message)
+            else:
+                recordconvo(message)
+            return amitrue
 
     filter_look = FilterLook()
-    
     look_handler = MessageHandler(filter_look, reply_withhtml)
     
 
     # Where are you?
     class FilterWhere(BaseFilter):
         def filter(self, message):
-            return 'Where' in message.text
-
-    # Where are you?
-    class FilterWheresimple(BaseFilter):
-        def filter(self, message):
-            return 'where' in message.text
+            amitrue = ('where' in message.text or 'Where' in message.text)
+            return amitrue
 
     filter_where = FilterWhere()
-    filter_wheresimple = FilterWheresimple()
-
-    where_handler = MessageHandler(filter_where | filter_wheresimple, reply_withphoto)
+    where_handler = MessageHandler(filter_where, reply_withphoto)
     
     
     # Many questions about feelings, same response
@@ -319,27 +329,19 @@ def main():
 
     class FilterFeel(BaseFilter):
         def filter(self, message):
-            return 'you feel?' in message.text
-
-    class FilterFeeling(BaseFilter):
-        def filter(self, message):
-            return 'you feeling?' in message.text
-
-    class DayBeen(BaseFilter):
-        def filter(self, message):
-            return 'day been?' in message.text
+            amitrue = ('feel' in message.text or 'feeling' in message.text or 'been?' in message.text)
+            return amitrue
 
     filter_feel = FilterFeel()
-    filter_feeling = FilterFeeling()
-    day_been = DayBeen()
-    feel_handler = MessageHandler(filter_feel | filter_feeling | day_been, reply_withfeeling)
+    feel_handler = MessageHandler(filter_feel, reply_withfeeling)
     
 
     # One question about sleep, same response
     # How did you sleep? (sleep)
     class FilterSleep(BaseFilter):
         def filter(self, message):
-            return 'you sleep?' in message.text
+            amitrue = ('sleep' in message.text)
+            return amitrue
 
     filter_sleep = FilterSleep()
     sleep_handler = MessageHandler(filter_sleep, reply_withsleep)
@@ -349,6 +351,7 @@ def main():
     dp = updater.dispatcher
 
     # listening for "feelings" and "sleep"
+    dp.add_handler(greetings_handler)
     dp.add_handler(feel_handler)
     dp.add_handler(sleep_handler)
     dp.add_handler(where_handler)
