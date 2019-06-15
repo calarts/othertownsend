@@ -58,6 +58,20 @@ class SleepQuality(Resource):
         return {'sleep': str(other.get_mysleep()), 'timestr': timestr}
 
 
+
+@devapi.route('/conversations/-1')
+class LatestConversation(Resource):
+	def get(self):
+		convo = Conversation.select().order_by(Conversation.timestamp.desc()).get()
+		myd = {'first_name': str(convo.actor.first_name),
+					'last_name': str(convo.actor.last_name),
+					'message': str(convo.message),
+					'timestamp': str(convo.timestamp)
+					}
+
+		return myd
+
+
 @devapi.route('/conversations')
 class MyConversations(Resource):
 	"""Get all conversations"""
