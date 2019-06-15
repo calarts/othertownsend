@@ -26,39 +26,53 @@ mood = other.get_mymood()[1]
 
 app = Flask(__name__)
 # set the base URL with a blueprint
-blueprint = Blueprint('api', __name__, url_prefix='/api')
-api = Api(blueprint)
+blueprint = Blueprint('devapi', __name__, url_prefix='/devapi')
+devapi = Api(blueprint)
 app.register_blueprint(blueprint)
 
 
-@api.route('/heartrate')
+@devapi.route('/heartrate')
 class HeartRate(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mypulse = other.gimmebeats(heartrate_keylist)
         return {'heartrate': mypulse, 'timestr': timestr}
 
-@api.route('/location')
+@devapi.route('/location')
 class CurrentLocation(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mykey, myplace = other.gimmeclosestplace()
         return {'myplace': myplace, 'mykey': mykey, 'timestr': timestr}
 
-@api.route('/feelings')
+@devapi.route('/feelings')
 class CurrentFeelings(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'feelings': str(other.get_mymood()), 'timestr': timestr}
 
-@api.route('/sleep')
+@devapi.route('/sleep')
 class SleepQuality(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'sleep': str(other.get_mysleep()), 'timestr': timestr}
 
 
-@api.route('/conversations')
+
+@devapi.route('/conversations/-1')
+class LatestConversation(Resource):
+	def get(self):
+		convo = Conversation.select().order_by(Conversation.timestamp.desc()).get()
+		myd = {'first_name': str(convo.actor.first_name),
+					'last_name': str(convo.actor.last_name),
+					'message': str(convo.message),
+					'timestamp': str(convo.timestamp)
+					}
+
+		return myd
+
+
+@devapi.route('/conversations')
 class MyConversations(Resource):
 	"""Get all conversations"""
 	# example
