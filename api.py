@@ -6,10 +6,9 @@ from peewee import *
 from flask import Flask, Blueprint
 from flask_restplus import Resource, Api
 
-from models import Person, Heart, Brain, Place, Step, Look, Conversation
-from utils import gimmeLongLat, gimmeGeojson, gimmeSeconds, gimmeFeelings
-from utils import gimmecurseconds, gimmeclosestkv, gimmecurrsteps
-from utils import gimmeclosestplace, gimmecurrlooks, gimmebeats
+from models import Person, Heart, Place, Step, Look, Conversation
+from utils import gimmeLongLat, gimmeGeojson, gimmeSeconds
+from utils import gimmecurseconds
 
 heartrate_keylist = []
 q = Heart.select(Heart.timestamp)
@@ -22,7 +21,8 @@ q = Step.select(Step.timestamp)
 for t in q:
     step_keylist.append( int(t.timestamp) )
 
-mood = gimmeFeelings()[2]
+other = Person.get(name='OTHER')
+mood = other.get_mymood()[1]
 
 app = Flask(__name__)
 # set the base URL with a blueprint
@@ -35,27 +35,27 @@ app.register_blueprint(blueprint)
 class HeartRate(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
-        mypulse = gimmebeats(heartrate_keylist)
+        mypulse = other.gimmebeats(heartrate_keylist)
         return {'heartrate': mypulse, 'timestr': timestr}
 
 @api.route('/location')
 class CurrentLocation(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
-        mykey, myplace = gimmeclosestplace()
+        mykey, myplace = other.gimmeclosestplace()
         return {'myplace': myplace, 'mykey': mykey, 'timestr': timestr}
 
 @api.route('/feelings')
 class CurrentFeelings(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
-        return {'feelings': str(gimmeFeelings()[0]), 'timestr': timestr}
+        return {'feelings': str(other.get_mymood()), 'timestr': timestr}
 
 @api.route('/sleep')
 class SleepQuality(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
-        return {'sleep': str(gimmeFeelings()[1]), 'timestr': timestr}
+        return {'sleep': str(other.get_mysleep()), 'timestr': timestr}
 
 
 @api.route('/conversations')

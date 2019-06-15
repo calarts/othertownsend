@@ -4,30 +4,13 @@ import json, csv
 from shapely.geometry import Point
 from shapely.wkt import dumps, loads
 
-from models import Person, Heart, Brain, Place, Step, Look, Conversation
+from models import Person, Heart, Place, Step, Look, Conversation
 from vars import heartratedata, sleepdata, timepointdata, stepdata, lookdata
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Utils 
 # from utils import gimmeLongLat, gimmeGeojson, gimmeSeconds, 
-# from utils import gimmecurseconds, gimmeclosestkv, gimmecurrsteps, 
-# from utils import gimmeclosestplace, gimmecurrlooks
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-
-def gimmeFeelings(myday=int(datetime.today().day)):
-    feels = ["💛","💜","💜","💛","💜","💜","💛",
-        "💛","💛","💛","💛","💛","💜","💜",
-        "💛","💜","💜","💛","💛","💜","💛",
-        "💜","💛","💛","💜","💜","💛","💛",
-        "💜","💛","💛","💛","💜","💛","💜"]
-    sleeps = ["➖","〰️","➖","➖","➖","➖","〰️",
-        "➖","〰️","➖","〰️","➖","➖","➖",
-        "➖","➖","➖","〰️","➖","➖","➖",
-        "➖","➖","➖","➖","〰️","➖","〰️",
-        "➖","〰️","➖","➖","➖","➖","➖"]
-    if feels[myday] == "💜": mood = 0
-    if feels[myday] == "💛": mood = 1
-    return feels[myday], sleeps[myday], mood
 
 def gimmeLongLat(stups):
     # ugh, must reverse lat and lng
@@ -69,56 +52,6 @@ def gimmecurseconds():
     now = datetime.now()     # should be local time!
     secs_since_midnight = (now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds()
     return int(secs_since_midnight)
-
-def gimmeclosestkv(mykeys):
-#     mykeys = set().union(*(d.keys() for d in alistofdicts))
-    mykey = min(mykeys, key=lambda x:abs(x - gimmecurseconds() ))
-    q = Heart.select().where(Heart.timestamp == int(mykey))
-    for entry in q:
-        mybpm = entry.bpm    
-
-    return mykey,mybpm
-
-def gimmebeats(mykeys):
-#     mykeys = set().union(*(d.keys() for d in alistofdicts))
-    mykey = min(mykeys, key=lambda x:abs(x - gimmecurseconds() ))
-    q = Heart.select().where(Heart.timestamp == int(mykey))
-    for entry in q:
-        mybpm = entry.bpm    
-
-    return mybpm
-
-def gimmecurrsteps(mykeys):
-    mykey = min(mykeys, key=lambda x:abs(x - gimmecurseconds() ))
-    q = Step.select().where(Step.timestamp == int(mykey))
-    for entry in q:
-        mysteps = entry.steps    
-
-    return mykey,mysteps
-
-def gimmecurrlooks():
-    # should constraint this to one user, but alas XXX
-    looklist = []
-    for l in Look.select():
-        mystr = "<a href='%s'>%s</a>" %(l.link,l.look)
-        looklist.append(mystr)
-    return looklist
-
-def gimmeclosestplace():
-#     mykeys = set().union(*(d.keys() for d in alistofdicts))
-    # get the keys by querying the places
-    mykeys = []
-    q = Place.select()
-    for entry in q:
-        mykeys.append(int(entry.timestamp))
-
-    mykey = min(mykeys, key=lambda x:abs(x - gimmecurseconds() ))
-
-    q = Place.select().where(Place.timestamp == int(mykey))
-    for entry in q:
-        myplce = entry.point
-
-    return mykey,myplce
     
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 

@@ -1,7 +1,7 @@
 import logging
 
-from utils import gimmeFeelings, gimmeLongLat, gimmeGeojson
-from utils import gimmeclosestplace, gimmebeats
+from models import Person
+from utils import gimmeLongLat, gimmeGeojson
 
 
 # Enable logging
@@ -11,6 +11,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+other = Person.get(name='OTHER')
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Define the command handlers. These usually take the two arguments bot and
@@ -29,34 +31,34 @@ def start(update, context):
     
 def pulse(update, context):
     """Gimme your current heart-rate"""
-    mypulse = gimmebeats(heartrate_keylist)
+    mypulse = other.gimmebeats(heartrate_keylist)
     msg = "♥ " + str(mypulse) + " BPM ("+timestr+")️"
     update.message.reply_text(msg)
 
 def feeling(update, context):
     """Gimme your current mood"""
-    mypulse = gimmebeats(heartrate_keylist)
-    msg = str(gimmeFeelings()[0]) + " ("+timestr+")️"
+    mypulse = other.gimmebeats(heartrate_keylist)
+    msg = str(other.get_mymood()) + " ("+timestr+")️"
     update.message.reply_text(msg)
 
 def sleep(update, context):
     """Gimme your current heart-rate"""
-    mypulse = gimmebeats(heartrate_keylist)
-    msg = str(gimmeFeelings()[1]) + " ("+timestr+")️"
+    mypulse = other.gimmebeats(heartrate_keylist)
+    msg = str(other.get_mysleep()) + " ("+timestr+")️"
     update.message.reply_text(msg)
 
 def loc(update, context):
     """Gimme your current location STUB"""
     # hacky! -- get the first position on our trip
     # you need to get the position in the duration
-    msg = gimmeclosestplace()
+    msg = other.gimmeclosestplace()
     update.message.reply_text(msg)
 
 def alarm(context):
     """Send the alarm message."""
     job = context.job
-    mypulse = gimmebeats(heartrate_keylist)
-    msg = str(gimmeFeelings()[0]) + str(gimmeFeelings()[1]) + str(gimmeclosestplace()) + str(mypulse) + " BPM ("+ str(timestr) +")"
+    mypulse = other.gimmebeats(heartrate_keylist)
+    msg = str(other.get_mymood()) + str(other.get_mysleep()) + str(other.gimmeclosestplace()) + str(mypulse) + " BPM ("+ str(timestr) +")"
     context.bot.send_message(job.context, text=msg)
 
 
