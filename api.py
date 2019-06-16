@@ -53,16 +53,16 @@ class CurrentFeelings(Resource):
 
 @devapi.route('/mood')
 class CurrentMood(Resource):
-	"""an aggregate of feelings prepared for ArduinoJson"""
+    """an aggregate of feelings prepared for ArduinoJson"""
     def get(self):
-        timestr = datetime.now().strftime("%s")			# we want a UNIX timestring
-        mymood = "❤"										# this seems to be legal
+        timestr = datetime.now().strftime("%s")            # we want a UNIX timestring
+        mymood = "❤"                                        # this seems to be legal
         mysleep = "--"
         # but this one gives you 0 or 1
         if other.get_mymood()[1] == 1:
-        	mymood = "❤"
+            mymood = "❤"
         else:
-        	mymood = "~"
+            mymood = "~"
         return {'mymood': str(mymood), 'timestr': int(timestr)}
 
 @devapi.route('/sleep')
@@ -75,65 +75,65 @@ class SleepQuality(Resource):
 
 @devapi.route('/conversations/-1')
 class LatestConversation(Resource):
-	def get(self):
-		convo = Conversation.select().order_by(Conversation.timestamp.desc()).get()
-		myd = {'first_name': str(convo.actor.first_name),
-					'last_name': str(convo.actor.last_name),
-					'message': str(convo.message),
-					'timestamp': str(convo.timestamp)
-					}
+    def get(self):
+        convo = Conversation.select().order_by(Conversation.timestamp.desc()).get()
+        myd = {'first_name': str(convo.actor.first_name),
+                    'last_name': str(convo.actor.last_name),
+                    'message': str(convo.message),
+                    'timestamp': str(convo.timestamp)
+                    }
 
-		return myd
+        return myd
 
 
 @devapi.route('/conversations')
 class MyConversations(Resource):
-	"""Get all conversations"""
-	# example
-	# for tweet in Tweet.select(Tweet.content, User.username).join(User):
-	# ...     print(tweet.user.username, '->', tweet.content)
+    """Get all conversations"""
+    # example
+    # for tweet in Tweet.select(Tweet.content, User.username).join(User):
+    # ...     print(tweet.user.username, '->', tweet.content)
 
-	# class Person(BaseModel):
-	#     name = CharField()
-	#     telegram_id = BigIntegerField()
-	#     created_at = DateTimeField()
-	#     chat_name = CharField()
-	#     first_name = CharField()
-	#     last_name = CharField()
-	#     login = CharField()
-	#     language_code = CharField()
-	# 
-	#     def get_mytimepoints(self):
-	#         return self.timepoints
-	# 
-	#     def get_myheartbeats(self):
-	#         return self.heartbeats
-	# 
-	#     def get_myconversations(self):
-	#         return self.conversations
-	# 
-	# class Conversation(BaseModel):
-	#     # record conversations with users
-	#     actor = ForeignKeyField(Person, backref='conversations')
-	#     message = TextField()
-	#     timestamp = DateTimeField(default=datetime.now)
+    # class Person(BaseModel):
+    #     name = CharField()
+    #     telegram_id = BigIntegerField()
+    #     created_at = DateTimeField()
+    #     chat_name = CharField()
+    #     first_name = CharField()
+    #     last_name = CharField()
+    #     login = CharField()
+    #     language_code = CharField()
+    # 
+    #     def get_mytimepoints(self):
+    #         return self.timepoints
+    # 
+    #     def get_myheartbeats(self):
+    #         return self.heartbeats
+    # 
+    #     def get_myconversations(self):
+    #         return self.conversations
+    # 
+    # class Conversation(BaseModel):
+    #     # record conversations with users
+    #     actor = ForeignKeyField(Person, backref='conversations')
+    #     message = TextField()
+    #     timestamp = DateTimeField(default=datetime.now)
 
-	def get(self):
-		myconvos = []
-		query = (Conversation
-				.select()
-				.join(Person, on=(Conversation.actor == Person.id)))
+    def get(self):
+        myconvos = []
+        query = (Conversation
+                .select()
+                .join(Person, on=(Conversation.actor == Person.id)))
 
-		for convo in query:
-			myd = {'first_name': str(convo.actor.first_name),
-					'last_name': str(convo.actor.last_name),
-					'message': str(convo.message),
-					'timestamp': str(convo.timestamp)
-					}
-			print(myd)
-			myconvos.append(myd)
+        for convo in query:
+            myd = {'first_name': str(convo.actor.first_name),
+                    'last_name': str(convo.actor.last_name),
+                    'message': str(convo.message),
+                    'timestamp': str(convo.timestamp)
+                    }
+            print(myd)
+            myconvos.append(myd)
 
-		return myconvos
+        return myconvos
 
 
 if __name__ == '__main__':
