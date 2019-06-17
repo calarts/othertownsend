@@ -63,12 +63,14 @@ class CurrentState(Resource):
             mymood = "❤"
         else:
             mymood = "o"
-        return {'mymood': str(mymood), 
+        mylat,mylon= other.gimmeclosestplace()
+        return {'mymood': str(mymood),
+        		'mood': other.get_mymood()[1],
         		'timestr': int(timestr), 
         		'sleep': str(other.get_mysleep()),
         		'heartrate': other.gimmebeats(heartrate_keylist),
         		'steps': other.gimmecurrsteps(step_keylist),
-        		'location': other.gimmeclosestplace()}
+        		'location': [mylat,mylon]}
 
 @devapi.route('/sleep')
 class SleepQuality(Resource):

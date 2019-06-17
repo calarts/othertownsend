@@ -94,7 +94,7 @@ class Person(BaseModel):
         for entry in q:
             self.mysteps = entry.steps    
 
-        return mykey,self.mysteps
+        return self.mysteps
 
     def gimmecurrlooks(self):
         looklist = []
@@ -104,8 +104,24 @@ class Person(BaseModel):
         self.looklist = looklist
         return self.looklist
 
+    def gimmeclosestpoint(self):
+        # mykeys = set().union(*(d.keys() for d in alistofdicts))
+        # get the keys by querying the places
+        mykeys = []
+        q = Place.select()
+        for entry in q:
+            mykeys.append(int(entry.timestamp))
+
+        mykey = min(mykeys, key=lambda x:abs(x - gimmecurseconds() ))
+
+        q = Place.select().where(Place.timestamp == int(mykey))
+        for entry in q:
+            self.myplce = entry.point
+
+        return self.myplce.y, self.myplce.x
+
     def gimmeclosestplace(self):
-    #     mykeys = set().union(*(d.keys() for d in alistofdicts))
+        # mykeys = set().union(*(d.keys() for d in alistofdicts))
         # get the keys by querying the places
         mykeys = []
         q = Place.select()
