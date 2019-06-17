@@ -2,6 +2,7 @@ from random import choice
 from datetime import time, datetime
 
 from peewee import *
+from shapely.wkt import dumps, loads
 
 from _config import DEBUG
 
@@ -118,7 +119,8 @@ class Person(BaseModel):
         for entry in q:
             self.myplce = entry.point
 
-        return self.myplce.y, self.myplce.x
+        geom = loads(self.myplce)
+        return geom.x, geom.y           # (37.9609969049851, -122.404216421264)
 
     def gimmeclosestplace(self):
         # mykeys = set().union(*(d.keys() for d in alistofdicts))
