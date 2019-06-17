@@ -306,7 +306,7 @@ def main():
     # What are you looking at??
     class FilterLook(BaseFilter):
         def filter(self, message):
-            amitrue = ('looking' in message.text or 'look' in message.text)
+            amitrue = ('looking' in message.text or 'look' in message.text or 'buy' in message.text)
             # this little hack will record all text messages
             if amitrue:
                 recordconvo(message)

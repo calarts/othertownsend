@@ -2,6 +2,7 @@ from random import choice
 from datetime import time, datetime
 
 from peewee import *
+from shapely.wkt import dumps, loads
 
 from _config import DEBUG
 
@@ -71,11 +72,11 @@ class Person(BaseModel):
         return self.feels, self.mood
 
     def get_mysleep(self,myday=int(datetime.today().day)):
-        sleeps = ["➖","〰️","➖","➖","➖","➖","〰️",
-            "➖","〰️","➖","〰️","➖","➖","➖",
-            "➖","➖","➖","〰️","➖","➖","➖",
-            "➖","➖","➖","➖","〰️","➖","〰️",
-            "➖","〰️","➖","➖","➖","➖","➖"]
+        sleeps = ["--","~","--","--","--","--","~",
+            "--","~","--","~","--","--","--",
+            "--","--","--","~","--","--","--",
+            "--","--","--","--","~","--","~",
+            "--","~","--","--","--","--","--"]
         self.sleep = sleeps[myday]
         return self.sleep
 
@@ -94,7 +95,7 @@ class Person(BaseModel):
         for entry in q:
             self.mysteps = entry.steps    
 
-        return mykey,self.mysteps
+        return self.mysteps
 
     def gimmecurrlooks(self):
         looklist = []
@@ -104,8 +105,8 @@ class Person(BaseModel):
         self.looklist = looklist
         return self.looklist
 
-    def gimmeclosestplace(self):
-    #     mykeys = set().union(*(d.keys() for d in alistofdicts))
+    def gimmeclosestpoint(self):
+        # mykeys = set().union(*(d.keys() for d in alistofdicts))
         # get the keys by querying the places
         mykeys = []
         q = Place.select()
@@ -118,7 +119,24 @@ class Person(BaseModel):
         for entry in q:
             self.myplce = entry.point
 
-        return mykey,myplce
+        geom = loads(self.myplce)
+        return geom.x, geom.y           # (37.9609969049851, -122.404216421264)
+
+    def gimmeclosestplace(self):
+        # mykeys = set().union(*(d.keys() for d in alistofdicts))
+        # get the keys by querying the places
+        mykeys = []
+        q = Place.select()
+        for entry in q:
+            mykeys.append(int(entry.timestamp))
+
+        mykey = min(mykeys, key=lambda x:abs(x - gimmecurseconds() ))
+
+        q = Place.select().where(Place.timestamp == int(mykey))
+        for entry in q:
+            self.myplce = entry.point
+
+        return self.myplce
 
 
 
