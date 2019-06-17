@@ -63,7 +63,7 @@ class CurrentState(Resource):
             mymood = "❤"
         else:
             mymood = "o"
-        mylat,mylon= other.gimmeclosestplace()
+        mylat,mylon= other.gimmeclosestpoint()
         return {'mymood': str(mymood),
         		'mood': other.get_mymood()[1],
         		'timestr': int(timestr), 
