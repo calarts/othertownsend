@@ -118,7 +118,7 @@ class Person(BaseModel):
         for entry in q:
             self.myplce = entry.point
 
-        return mykey,myplce
+        return self.myplce
 
 
 
