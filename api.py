@@ -26,32 +26,32 @@ mood = other.get_mymood()[1]
 
 app = Flask(__name__)
 # set the base URL with a blueprint
-blueprint = Blueprint('devapi', __name__, url_prefix='/devapi')
-devapi = Api(blueprint)
+blueprint = Blueprint('api', __name__, url_prefix='/api')
+api = Api(blueprint)
 app.register_blueprint(blueprint)
 
 
-@devapi.route('/heartrate')
+@api.route('/heartrate')
 class HeartRate(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mypulse = other.gimmebeats(heartrate_keylist)
         return {'heartrate': mypulse, 'timestr': timestr}
 
-@devapi.route('/location')
+@api.route('/location')
 class CurrentLocation(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         mykey, myplace = other.gimmeclosestplace()
         return {'myplace': myplace, 'mykey': mykey, 'timestr': timestr}
 
-@devapi.route('/feelings')
+@api.route('/feelings')
 class CurrentFeelings(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'feelings': str(other.get_mymood()), 'timestr': timestr}
 
-@devapi.route('/state')
+@api.route('/state')
 class CurrentState(Resource):
     """an aggregate of feelings prepared for ArduinoJson"""
     def get(self):
@@ -72,13 +72,13 @@ class CurrentState(Resource):
         		'steps': other.gimmecurrsteps(step_keylist),
         		'location': [mylat,mylon]}
 
-@devapi.route('/sleep')
+@api.route('/sleep')
 class SleepQuality(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'sleep': str(other.get_mysleep()), 'timestr': timestr}
 
-@devapi.route('/conversations/-1')
+@api.route('/conversations/-1')
 class LatestConversation(Resource):
     def get(self):
         convo = Conversation.select().order_by(Conversation.timestamp.desc()).get()
@@ -91,37 +91,8 @@ class LatestConversation(Resource):
         return myd
 
 
-@devapi.route('/conversations')
+@api.route('/conversations')
 class MyConversations(Resource):
-    """Get all conversations"""
-    # example
-    # for tweet in Tweet.select(Tweet.content, User.username).join(User):
-    # ...     print(tweet.user.username, '->', tweet.content)
-
-    # class Person(BaseModel):
-    #     name = CharField()
-    #     telegram_id = BigIntegerField()
-    #     created_at = DateTimeField()
-    #     chat_name = CharField()
-    #     first_name = CharField()
-    #     last_name = CharField()
-    #     login = CharField()
-    #     language_code = CharField()
-    # 
-    #     def get_mytimepoints(self):
-    #         return self.timepoints
-    # 
-    #     def get_myheartbeats(self):
-    #         return self.heartbeats
-    # 
-    #     def get_myconversations(self):
-    #         return self.conversations
-    # 
-    # class Conversation(BaseModel):
-    #     # record conversations with users
-    #     actor = ForeignKeyField(Person, backref='conversations')
-    #     message = TextField()
-    #     timestamp = DateTimeField(default=datetime.now)
 
     def get(self):
         myconvos = []
