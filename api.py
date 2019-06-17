@@ -51,27 +51,30 @@ class CurrentFeelings(Resource):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'feelings': str(other.get_mymood()), 'timestr': timestr}
 
-@devapi.route('/mood')
-class CurrentMood(Resource):
+@devapi.route('/state')
+class CurrentState(Resource):
     """an aggregate of feelings prepared for ArduinoJson"""
     def get(self):
         timestr = datetime.now().strftime("%s")            # we want a UNIX timestring
-        mymood = "❤"                                        # this seems to be legal
+        mymood = "❤"                                       # this seems to be legal
         mysleep = "--"
         # but this one gives you 0 or 1
         if other.get_mymood()[1] == 1:
             mymood = "❤"
         else:
-            mymood = "~"
-        return {'mymood': str(mymood), 'timestr': int(timestr)}
+            mymood = "o"
+        return {'mymood': str(mymood), 
+        		'timestr': int(timestr), 
+        		'sleep': str(other.get_mysleep()),
+        		'heartrate': other.gimmebeats(heartrate_keylist),
+        		'steps': other.gimmecurrsteps(step_keylist),
+        		'location': other.gimmeclosestplace()}
 
 @devapi.route('/sleep')
 class SleepQuality(Resource):
     def get(self):
         timestr = datetime.now().strftime("%H:%M:%S")
         return {'sleep': str(other.get_mysleep()), 'timestr': timestr}
-
-
 
 @devapi.route('/conversations/-1')
 class LatestConversation(Resource):
