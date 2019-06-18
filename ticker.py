@@ -30,6 +30,9 @@ from shapely.wkt import dumps, loads
 from peewee import *
 from telegram.ext import Updater, CommandHandler, MessageHandler
 from telegram.ext import BaseFilter, Filters
+# buttons
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 
 from geojson import LineString, Feature, Point, FeatureCollection
 # import geojsonio
@@ -38,9 +41,10 @@ from models import Person, Heart, Step, Conversation
 from vars import heartratedata, sleepdata, timepointdata, stepdata
 # from utils import gimmeLongLat, gimmeGeojson
 # from utils import gimmeSeconds, gimmecurseconds
-from utils import createPersondb, createHeartdb
+from utils import createPersondb, createHeartdb, random_line
 from utils import createPlacedb, createStepdb, createLookdb, createConversationdb
-from commands import error, start, pulse, feeling, sleep, loc
+# from commands import pulse, feeling, sleep, loc
+from commands import error, start, hidden
 from commands import alarm, set_timer, unset, shutdown, stop
 
 from _config import TOKEN, DEBUG
@@ -122,39 +126,14 @@ for t in q:
 #     }
 # }
 
-# {
-# 	'message_id': 2570,
-# 	'date': 1560385165,
-# 	'chat': {
-# 		'id': 730104154,
-# 		'type': 'private',
-# 		'username': 'dgoodwin',
-# 		'first_name': 'Douglas',
-# 		'last_name': 'Goodwin'
-# 	},
-# 	'text': 'how are you feeling?',
-# 	'entities': [],
-# 	'caption_entities': [],
-# 	'photo': [],
-# 	'new_chat_members': [],
-# 	'new_chat_photo': [],
-# 	'delete_chat_photo': False,
-# 	'group_chat_created': False,
-# 	'supergroup_chat_created': False,
-# 	'channel_chat_created': False,
-# 	'from': {
-# 		'id': 730104154,
-# 		'first_name': 'Douglas',
-# 		'is_bot': False,
-# 		'last_name': 'Goodwin',
-# 		'username': 'dgoodwin',
-# 		'language_code': 'en'
-# 	}
-# }
 
 
 def reply_withgreeting(update, context):
     """reply with simple hallos"""
+
+    with open("data/townsendtalk.txt") as f:
+        rando = random_line(f)
+
     feelings = other.get_mymood()   # this sets mood
     if other.mood == 1:
         replies = ["hi",
@@ -162,6 +141,7 @@ def reply_withgreeting(update, context):
                 "what's up",
                 "yo",
                 "how you been",
+                "I saw you here before,",
                 "👋",
                 "🤝",
                 "🖐️",
@@ -172,12 +152,15 @@ def reply_withgreeting(update, context):
                 "yo",
                 "🖐️",
                 "k",
+                "where you been",
+                "dunno",
                 "howdy"]
+    # give the replies some variety
     if update.message.from_user.first_name:
         personalreply = str(update.message.from_user.first_name)
     else:
-        personalreply = str(update.message.from_user.name)
-    msg = choice(replies) +" "+ personalreply
+        personalreply = str(update.message.from_user.full_name)
+    msg = choice(replies) +" "+ personalreply +"\r\n"+ rando
     update.message.reply_text(msg)
 
 
@@ -234,6 +217,9 @@ def reply_withphoto(update,context):
 
     update.message.reply_photo(photo=open(choice(imgs), 'rb'))
 
+def reply_withrandom(update,context):
+    with open("data/townsendtalk.txt") as f:
+        update.message.reply_text( random_line(f) )
 
 def reply_withhtml(update,context):
     """What are you looking at?"""
@@ -243,10 +229,10 @@ def reply_withhtml(update,context):
 
 def recordconvo(message):
     """Record contact from humans and others"""
-    fn = message.from_user.first_name
-    ln = message.from_user.last_name
-    lg = message.from_user.username
-    lc = message.from_user.language_code
+    fn = message.from_user.first_name or ""
+    ln = message.from_user.last_name or ""
+    lg = message.from_user.username or ""
+    lc = message.from_user.language_code or "en"
     ti = message.from_user.id
     cn = message.from_user.name
     msg = message.text
@@ -278,6 +264,10 @@ def recordconvo(message):
     except:
         print("couldn't save this Conversation!",chatee,msg)
 
+
+def button(update, context):
+    query = update.callback_query
+    query.edit_message_text(text="Selected option: {}".format(query.data))
  
 def main():
     # """Run bot."""
@@ -286,7 +276,6 @@ def main():
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
     updater = Updater(TOKEN, use_context=True)
-
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     # Let's listen for specific questions:
@@ -362,8 +351,10 @@ def main():
     dp.add_handler(look_handler)
 
     # on different commands - answer in Telegram
+    dp.add_handler(CallbackQueryHandler(button))
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", start))
+    dp.add_handler(CommandHandler("hidden", hidden))
     dp.add_handler(CommandHandler("set", set_timer,
                                   pass_args=True,
                                   pass_job_queue=True,
@@ -373,11 +364,11 @@ def main():
     # log all errors
     dp.add_error_handler(error)
     # add a stop handler
-    dp.add_handler(CommandHandler('stop', stop))
-    dp.add_handler(CommandHandler('pulse', pulse, pass_chat_data=True))
-    dp.add_handler(CommandHandler('loc', loc, pass_chat_data=True))
-    dp.add_handler(CommandHandler('feeling', feeling, pass_chat_data=True))
-    dp.add_handler(CommandHandler('sleep', sleep, pass_chat_data=True))
+    # dp.add_handler(CommandHandler('stop', stop))
+    # dp.add_handler(CommandHandler('pulse', pulse, pass_chat_data=True))
+    # dp.add_handler(CommandHandler('loc', loc, pass_chat_data=True))
+    # dp.add_handler(CommandHandler('feeling', feeling, pass_chat_data=True))
+    # dp.add_handler(CommandHandler('sleep', sleep, pass_chat_data=True))
 
 
     # Start the Bot
