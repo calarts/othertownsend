@@ -27,7 +27,7 @@ mood = other.get_mymood()[1]
 app = Flask(__name__)
 # set the base URL with a blueprint
 blueprint = Blueprint('devapi', __name__, url_prefix='/devapi')
-api = Api(blueprint)
+devapi = Api(blueprint)
 app.register_blueprint(blueprint)
 
 
