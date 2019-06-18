@@ -15,4 +15,5 @@ fields:
   name: description
   label: description
 pages:
+- theothertownsend.com/content/posts/sisters.md
 - theothertownsend.com/content/posts/apple-photos.md

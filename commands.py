@@ -3,6 +3,10 @@ import logging
 from models import Person
 from utils import gimmeLongLat, gimmeGeojson
 
+# buttons
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
+
 
 # Enable logging
 logging.FileHandler('logs/tickererror.log')
@@ -21,38 +25,49 @@ other = Person.get(name='OTHER')
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 def start(update, context):
-    mymsg = """Hi, I am the Other Townsend! Ask me questions like 
+    mymsg = """Hi, I am the Other Townsend! Say 'hi" then ask me questions
                 "How are you feeling?",
                 "How did you sleep?", 
                 "Where are you?" and 
-                "What are you looking at?" 
-                You may also type /set <seconds> to get regular updates from me."""
+                "What are you looking at?" """
     update.message.reply_text(mymsg)
+
+def hidden(update, context):
+    message = 'Please press the Help button for more instructions.'
+    keyboard = [[InlineKeyboardButton("Option 1", callback_data='1'),
+                 InlineKeyboardButton("Option 2", callback_data='2')],
+
+                [InlineKeyboardButton("Option 3", callback_data='3')]]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    update.message.reply_text('Please choose:', reply_markup=reply_markup)
+
     
-def pulse(update, context):
-    """Gimme your current heart-rate"""
-    mypulse = other.gimmebeats(heartrate_keylist)
-    msg = "♥ " + str(mypulse) + " BPM ("+timestr+")️"
-    update.message.reply_text(msg)
+# def pulse(update, context):
+#     """Gimme your current heart-rate"""
+#     mypulse = other.gimmebeats(heartrate_keylist)
+#     msg = "♥ " + str(mypulse) + " BPM ("+timestr+")️"
+#     update.message.reply_text(msg)
 
-def feeling(update, context):
-    """Gimme your current mood"""
-    mypulse = other.gimmebeats(heartrate_keylist)
-    msg = str(other.get_mymood()) + " ("+timestr+")️"
-    update.message.reply_text(msg)
+# def feeling(update, context):
+#     """Gimme your current mood"""
+#     mypulse = other.gimmebeats(heartrate_keylist)
+#     msg = str(other.get_mymood()) + " ("+timestr+")️"
+#     update.message.reply_text(msg)
 
-def sleep(update, context):
-    """Gimme your current heart-rate"""
-    mypulse = other.gimmebeats(heartrate_keylist)
-    msg = str(other.get_mysleep()) + " ("+timestr+")️"
-    update.message.reply_text(msg)
+# def sleep(update, context):
+#     """Gimme your current heart-rate"""
+#     mypulse = other.gimmebeats(heartrate_keylist)
+#     msg = str(other.get_mysleep()) + " ("+timestr+")️"
+#     update.message.reply_text(msg)
 
-def loc(update, context):
-    """Gimme your current location STUB"""
-    # hacky! -- get the first position on our trip
-    # you need to get the position in the duration
-    msg = other.gimmeclosestplace()
-    update.message.reply_text(msg)
+# def loc(update, context):
+#     """Gimme your current location STUB"""
+#     # hacky! -- get the first position on our trip
+#     # you need to get the position in the duration
+#     msg = other.gimmeclosestplace()
+#     update.message.reply_text(msg)
 
 def alarm(context):
     """Send the alarm message."""

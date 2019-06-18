@@ -1,3 +1,4 @@
+import random
 from datetime import datetime
 import json, csv
 
@@ -9,8 +10,20 @@ from vars import heartratedata, sleepdata, timepointdata, stepdata, lookdata
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Utils 
-# from utils import gimmeLongLat, gimmeGeojson, gimmeSeconds, 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# from utils import gimmeLongLat, gimmeGeojson, gimmeSeconds, random_line
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# from Knuth...
+def random_line(afile):
+    line = next(afile)
+    for num, aline in enumerate(afile, 2):
+        if random.randrange(num): continue
+        line = aline
+    return line
+
+# Get a line: 
+# with open("data/townsendtalk.txt") as f:
+#     print(random_line(f))
 
 def gimmeLongLat(stups):
     # ugh, must reverse lat and lng
