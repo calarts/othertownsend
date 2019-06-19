@@ -200,7 +200,7 @@ def reply_withfeeling(update, context):
 
 def reply_withsleep(update, context):
     """How did you sleep?"""
-    reply = other.get_personalreply(update,themeat=str(other.get_mysleep()))
+    reply = other.get_mysleep()
     update.message.reply_text(reply)
 
 def reply_withphoto(update,context):
