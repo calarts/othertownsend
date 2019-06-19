@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 other = Person.get(name='OTHER')
+timestr = datetime.now().strftime("%H:%M:%S")
 
 # You don't want to run these on every query!
 heartrate_keylist = []
