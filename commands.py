@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, date, timedelta, time
 
 from models import Person
 from utils import gimmeLongLat, gimmeGeojson
@@ -7,6 +8,7 @@ from utils import gimmeLongLat, gimmeGeojson
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 
+from models import Heart, Step
 
 # Enable logging
 logging.FileHandler('logs/tickererror.log')
@@ -17,6 +19,20 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 other = Person.get(name='OTHER')
+timestr = datetime.now().strftime("%H:%M:%S")
+
+# You don't want to run these on every query!
+heartrate_keylist = []
+q = Heart.select(Heart.timestamp)
+for t in q:
+    heartrate_keylist.append( int(t.timestamp) )
+
+# You don't want to run this on every query
+step_keylist = []
+q = Step.select(Step.timestamp)
+for t in q:
+    step_keylist.append( int(t.timestamp) )
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Define the command handlers. These usually take the two arguments bot and
