@@ -285,7 +285,18 @@ def main():
     # simple greetings
     class FilterGreetings(BaseFilter):
         def filter(self, message):
-            amitrue = ('hi' in message.text or 'hey' in message.text or 'hello' in message.text)
+            amitrue = ('hi' in message.text or 
+                        'hey' in message.text or 
+                        'Hello' in message.text or 
+                        'Hi' in message.text or 
+                        'Hi!' in message.text or 
+                        'Hello!' in message.text or 
+                        'howdy' in message.text or 
+                        'yo' in message.text or 
+                        'Yo!' in message.text or 
+                        '👋' in message.text or 
+                        '🖐️' in message.text
+                        )
             return amitrue
 
     filter_greetings = FilterGreetings()
