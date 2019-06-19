@@ -7,6 +7,7 @@ from utils import gimmeLongLat, gimmeGeojson
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 
+from models import Heart, Step
 
 # Enable logging
 logging.FileHandler('logs/tickererror.log')
