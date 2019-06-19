@@ -345,7 +345,10 @@ def main():
     # How did you sleep? (sleep)
     class FilterSleep(BaseFilter):
         def filter(self, message):
-            amitrue = ('sleep' in message.text)
+            amitrue = ('sleep' in message.text  or 
+                        'Sleep' in message.text  or 
+                        'Sleep?' in message.text  or 
+                        'sleep?' in message.text)
             return amitrue
 
     filter_sleep = FilterSleep()
