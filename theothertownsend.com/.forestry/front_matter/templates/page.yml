@@ -26,6 +26,7 @@ fields:
     export_format: MM/DD/YYYY
   default: now
 pages:
+- theothertownsend.com/content/posts/in-ny-come-see-me-thursday-parsons-making-center.md
 - theothertownsend.com/content/posts/how-to-spoof-fitbit.md
 - theothertownsend.com/content/posts/from-my-trip-to-baltimore.md
 - theothertownsend.com/content/posts/what-am.md
