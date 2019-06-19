@@ -18,6 +18,19 @@ logger.setLevel(logging.INFO)
 
 other = Person.get(name='OTHER')
 
+# You don't want to run these on every query!
+heartrate_keylist = []
+q = Heart.select(Heart.timestamp)
+for t in q:
+    heartrate_keylist.append( int(t.timestamp) )
+
+# You don't want to run this on every query
+step_keylist = []
+q = Step.select(Step.timestamp)
+for t in q:
+    step_keylist.append( int(t.timestamp) )
+
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Define the command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
