@@ -200,7 +200,7 @@ def reply_withfeeling(update, context):
 
 def reply_withsleep(update, context):
     """How did you sleep?"""
-    reply = other.get_personalreply(update,themeat=str(other.get_mysleep()))
+    reply = other.get_mysleep()
     update.message.reply_text(reply)
 
 def reply_withphoto(update,context):
@@ -345,7 +345,10 @@ def main():
     # How did you sleep? (sleep)
     class FilterSleep(BaseFilter):
         def filter(self, message):
-            amitrue = ('sleep' in message.text)
+            amitrue = ('sleep' in message.text  or 
+                        'Sleep' in message.text  or 
+                        'Sleep?' in message.text  or 
+                        'sleep?' in message.text)
             return amitrue
 
     filter_sleep = FilterSleep()
