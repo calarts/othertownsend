@@ -14,6 +14,17 @@ fields:
 - type: text
   name: description
   label: description
+- name: date
+  type: datetime
+  label: Date
+  description: When di dyou write this post?
+  config:
+    required: false
+    date_format: MM/DD/YYYY
+    time_format: 
+    display_utc: false
+    export_format: MM/DD/YYYY
+  default: now
 pages:
 - theothertownsend.com/content/posts/sisters.md
 - theothertownsend.com/content/posts/apple-photos.md
