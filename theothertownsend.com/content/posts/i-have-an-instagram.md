@@ -7,3 +7,5 @@ title = "I have an Instagram"
 
 +++
 I finally got an Instagram. Yay!
+
+![](/media/othertownsend_instagram.jpg)
