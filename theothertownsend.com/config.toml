@@ -45,11 +45,11 @@ disqusShortname = "theothertownsend"
 [[params.social]]
     name = "Instagram"
     weight = 1
-    url = "https://instagram.com/theothertownsend/"
+    url = "https://instagram.com/othertownsend/"
 [[params.social]]
-    name = "Twitter"
+    name = "Facebook"
     weight = 2
-    url = "https://twitter.com/theothertownsend/"
+    url = "https://www.facebook.com/other.townsend"
 
 
 [languages]
