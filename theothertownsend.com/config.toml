@@ -68,6 +68,11 @@ disqusShortname = "theothertownsend"
         [languages.en.menu] # It is possible to change the menu too.
 
             [[languages.en.menu.main]]
+                name = "FAQ"
+                weight = 1.0
+                url = "faq"
+
+            [[languages.en.menu.main]]
                 name = "About"
                 weight = 1.0
                 url = "about"
