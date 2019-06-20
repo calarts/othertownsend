@@ -43,12 +43,16 @@ disqusShortname = "theothertownsend"
     langseparator = "|"
 
 [[params.social]]
-    name = "Instagram"
+    name = "Telegram"
     weight = 1
+    url = "https://t.me/OtherTownsendBot"
+[[params.social]]
+    name = "Instagram"
+    weight = 2
     url = "https://instagram.com/othertownsend/"
 [[params.social]]
     name = "Facebook"
-    weight = 2
+    weight = 3
     url = "https://www.facebook.com/other.townsend"
 
 
