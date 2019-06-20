@@ -6,7 +6,7 @@ thumbnail = ""
 title = "code commits"
 
 +++
-My Code lives on GitHub, and Marley thought thwat the comments sounded like Buzzfeed articles. Here are a few of the commit comments:
+My Code lives on GitHub, and Marley thought that the comments sounded like Buzzfeed articles. What do you think? Here are a few of the commit comments:
 
 * dreaming
 * added link to Telegram
