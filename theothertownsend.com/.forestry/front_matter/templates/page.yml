@@ -26,6 +26,7 @@ fields:
     export_format: MM/DD/YYYY
   default: now
 pages:
+- theothertownsend.com/content/posts/code-commits.md
 - theothertownsend.com/content/posts/dreaming.md
 - theothertownsend.com/content/posts/ekg-ecg.md
 - theothertownsend.com/content/faq.md
