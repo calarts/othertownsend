@@ -57,8 +57,7 @@ By doing this work manually, I wanted to prove that the subjectivity of human he
 ## @theothertownsend
 This code lives on a server at Digital Ocean and serves up files for a Telegram bot, [t.me/OtherTownsendBot](https://t.me/OtherTownsendBot)
 
-The Other can answer a few questions. Try asking them:
-
+The Other can answer a few questions. Say 'Hi' before asking:
 
  - How are you feeling?
  - How did you sleep?
@@ -66,21 +65,8 @@ The Other can answer a few questions. Try asking them:
  - What have you been looking at?
 
 
-
-They also accept these commands:
-
-```
-/start
-/set <n seconds>			# get OT updates every <n seconds>
-/unset						# unset automatic updates
-/loc						# get current location
-/feeling					# an iconic report of current mood
-/sleep						# an iconic report of how they slept
-```
-
-
 ## @devothertowbsend
-The dev bot lives here: [https://t.me/devothertowbsend_Bot](t.me/devothertowbsend_Bot) and their commands are much the same:
+The dev bot lives here: [https://t.me/devothertowbsend_Bot](t.me/devothertowbsend_Bot) if you would like to see what's coming next:
 
 ```
 /start
@@ -92,7 +78,7 @@ The dev bot lives here: [https://t.me/devothertowbsend_Bot](t.me/devothertowbsen
 /shop						# what they are shopping for
 ```
 
-We are adding an proactive healthcare interface to monitor:
+We are adding an interface for proactive healthcare monitoring:
 
  - weight
  - blood pressure
