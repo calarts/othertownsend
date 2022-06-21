@@ -11,7 +11,7 @@ gunicorn==19.9.0
 kiwisolver==1.1.0
 markovify==0.7.1
 matplotlib==3.1.0
-numpy==1.16.4
+numpy==1.22.0
 pandas==0.24.2
 peewee==3.9.5
 pycparser==2.19
